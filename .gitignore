@@ -1,0 +1,17 @@
+# ---------- Python ----------
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# ---------- Segredos ----------
+.env
+.env.*
+!.env.example
+
+# ---------- Editor / Sistema ----------
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
