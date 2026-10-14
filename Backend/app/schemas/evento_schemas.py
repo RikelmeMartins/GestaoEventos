@@ -10,3 +10,11 @@ class EventoSchema(Schema):
     local = fields.Str(required=True, validate=validate.Length(min=1, max=200))
     vagas = fields.Int(required=True, validate=validate.Range(min=1))
     status = fields.Str(dump_only=True)
+
+    @validates_schema
+    def validar_datas(self, dados, **kwargs):
+        inicio, fim = dados.get("data_inicial"), dados.get("data_fim")
+        if inicio and fim and fim < inicio:
+            raise ValidationError(
+                "A data de término deve ser igual ou posterior à de início.", "data_fim"
+                )

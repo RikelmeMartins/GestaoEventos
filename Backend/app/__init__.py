@@ -18,9 +18,22 @@ def create_app(config_class=None):
     cors.init_app(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
 
     from . import models
+    from .routes.eventos import bp as eventos_bp
+    app.register_blueprint(eventos_bp)
+
 
     @app.get("/api/health")
     def health():
         return {"status": "ok"}
     
+    registrar_erros(app)
     return app
+
+def registrar_erros(app):
+    @app.errorhandler(ValidationError)
+    def erro_validacao(e):
+        return jsonify({"erro": "Dados inválidos", "detalhes": e.messages}), 400
+
+    @app.errorhandler(HTTPException)
+    def erro_http(e):
+        return jsonify({"erro": e.description}), e.code
