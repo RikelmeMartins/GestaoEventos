@@ -2,10 +2,12 @@ from flask import abort
 from flask_jwt_extended import create_access_token
 from app.extensions import db
 from app.models.usuario import Usuario
-from app.schemas.usuario_schemas import UsuarioSchema, LoginSchema
+from app.schemas.usuario_schemas import UsuarioSchema, LoginSchema, AlterarPerfilSchema
+from app.auth import usuario_atual
 
 usuario_schema = UsuarioSchema()
 login_schema = LoginSchema()
+alterar_perfil_schema = AlterarPerfilSchema()
 
 def buscar_usuario(id):
     return db.get_or_404(Usuario, id, description="Usuário não encontrado.")
@@ -34,3 +36,17 @@ def autenticar(dados):
 
     token = create_access_token(identity=str(usuario.id), additional_claims={"perfil": usuario.perfil})
     return usuario, token
+
+def listar_usuarios():
+    return db.session.scalar(db.select(Usuario).order_by(Usuario.nome)).all()
+
+def alterar_perfil(id, dados):
+    perfil = alterar_perfil_schema.load(dados)["perfil"]    
+    usuario = buscar_usuario(id)
+
+    if usuario.id == usuario_atual and perfil != "administrador":
+        abort(400, description="Você não pode remover seu próprio perfil de administrador.")
+
+    usuario.perfil = perfil
+    db.session.commit()
+    return usuario

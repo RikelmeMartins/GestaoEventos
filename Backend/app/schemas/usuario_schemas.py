@@ -1,4 +1,5 @@
 from marshmallow import fields, Schema, validate
+from app.models.usuario import PERFIL
 
 class UsuarioSchema(Schema):
     id = fields.Int(dump_only=True)
@@ -10,3 +11,6 @@ class UsuarioSchema(Schema):
 class LoginSchema(Schema):
     email = fields.Str(required=True)
     senha = fields.Str(required=True, load_only=True)
+
+class AlterarPerfilSchema(Schema):
+    perfil = fields.Str(required=True, validate=validate.OneOf(PERFIL))

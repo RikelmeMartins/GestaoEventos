@@ -20,6 +20,8 @@ def create_app(config_class=None):
     from . import models
     from .routes.eventos import bp as eventos_bp
     from .routes.usuarios import bp as usuarios_bp
+    from .commands import registrar_comandos
+    registrar_comandos(app)
     app.register_blueprint(eventos_bp)
     app.register_blueprint(usuarios_bp)
 

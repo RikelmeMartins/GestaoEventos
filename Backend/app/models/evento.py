@@ -1,4 +1,5 @@
 from app.extensions import db
+from datetime import datetime
 
 STATUS_EVENTO = ("ativo", "cancelado")
 
@@ -15,3 +16,6 @@ class Evento(db.Model):
     vagas = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(20), nullable=False, default="ativo")
 
+    criado_em = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    organizador_id = db.Column(db.Integer, db.ForeignKey("usuarios.id"), nullable=False, index=True)
+    organizador = db.relationship("Usuario",  back_populates="eventos_organizados")

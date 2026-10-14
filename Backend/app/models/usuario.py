@@ -12,6 +12,8 @@ class Usuario(db.Model):
     senha_hash = db.Column(db.String(255), nullable=False)
     perfil = db.Column(db.String(200), nullable=False, default="participante")
 
+    eventos_organizados = db.relationship("Evento", back_populates="organizador")
+
     def definir_senha(self, senha):
         self.senha_hash = generate_password_hash(senha)
 
