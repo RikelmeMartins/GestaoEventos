@@ -1,12 +1,12 @@
 from flask import abort
 from app.extensions import db
-from app.models import Evento
+from app.models.evento import Evento
 from app.schemas.evento_schemas import EventoSchema
 
 evento_schema = EventoSchema()
 
 def listar_eventos():
-    return db.session.scalars(db.select(Evento).order_by(Evento.data_iniciala)).all()
+    return db.session.scalars(db.select(Evento).order_by(Evento.data_inicial)).all()
 
 def buscar_evento(id):
     return db.get_or_404(Evento, id, description="Evento não encontrado.")
@@ -14,7 +14,7 @@ def buscar_evento(id):
 def criar_evento(dados):
     evento = Evento(**evento_schema.load(dados))
     db.session.add(evento)
-    db.session.commit
+    db.session.commit()
     return evento
 
 def atualizar_evento(id, dados, parcial=False):

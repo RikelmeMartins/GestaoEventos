@@ -19,7 +19,9 @@ def create_app(config_class=None):
 
     from . import models
     from .routes.eventos import bp as eventos_bp
+    from .routes.usuarios import bp as usuarios_bp
     app.register_blueprint(eventos_bp)
+    app.register_blueprint(usuarios_bp)
 
 
     @app.get("/api/health")
@@ -37,3 +39,15 @@ def registrar_erros(app):
     @app.errorhandler(HTTPException)
     def erro_http(e):
         return jsonify({"erro": e.description}), e.code
+
+    @jwt.unauthorized_loader
+    def sem_token(motivo):
+        return jsonify({"erro": "Faça login para continuar."}), 401
+
+    @jwt.invalid_token_loader
+    def token_invalido(motivo):
+        return jsonify({"erro": "Token inválido."}), 401
+
+    @jwt.expired_token_loader
+    def token_expirado(header, payload):
+        return jsonify({"erro": "Sessão expirada. Faça login novamente."}), 401
