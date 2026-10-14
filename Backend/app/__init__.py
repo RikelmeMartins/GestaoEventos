@@ -17,6 +17,8 @@ def create_app(config_class=None):
     migrate.init_app(app, db)
     cors.init_app(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
 
+    from . import models
+
     @app.get("/api/health")
     def health():
         return {"status": "ok"}
