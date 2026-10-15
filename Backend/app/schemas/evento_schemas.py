@@ -15,7 +15,7 @@ class EventoSchema(Schema):
     vagas = fields.Int(required=True, validate=validate.Range(min=1))
     status = fields.Str(dump_only=True)
     criado_em = fields.DateTime(dump_only=True)
-    orgazinador = fields.Nested(ResponsalvelSchema, dump_only=True)
+    organizador = fields.Nested(ResponsalvelSchema, dump_only=True)
 
     @validates_schema
     def validar_datas(self, dados, **kwargs):

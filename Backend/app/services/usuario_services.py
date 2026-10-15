@@ -38,13 +38,13 @@ def autenticar(dados):
     return usuario, token
 
 def listar_usuarios():
-    return db.session.scalar(db.select(Usuario).order_by(Usuario.nome)).all()
+    return db.session.scalars(db.select(Usuario).order_by(Usuario.nome)).all()
 
 def alterar_perfil(id, dados):
     perfil = alterar_perfil_schema.load(dados)["perfil"]    
     usuario = buscar_usuario(id)
 
-    if usuario.id == usuario_atual and perfil != "administrador":
+    if usuario.id == usuario_atual() and perfil != "administrador":
         abort(400, description="Você não pode remover seu próprio perfil de administrador.")
 
     usuario.perfil = perfil

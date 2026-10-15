@@ -50,7 +50,7 @@ def cancelar_evento(id):
 def buscar_evento_gerenciavel(id):
     evento = buscar_evento(id)
 
-    if not admin and evento.organizador_id != usuario_atual:
+    if not admin() and evento.organizador_id != usuario_atual():
         abort(403, description="Apenas o responsável pelo evento pode gerenciá-lo.")
 
     return evento
