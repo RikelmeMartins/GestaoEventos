@@ -19,3 +19,6 @@ class Evento(db.Model):
     criado_em = db.Column(db.DateTime, nullable=False, default=datetime.now)
     organizador_id = db.Column(db.Integer, db.ForeignKey("usuarios.id"), nullable=False, index=True)
     organizador = db.relationship("Usuario",  back_populates="eventos_organizados")
+
+    atividades = db.relationship("Atividade", back_populates="evento", cascade="all, delete-orphan", 
+                                 order_by="Atividade.data_inicio")
