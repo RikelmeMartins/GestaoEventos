@@ -75,4 +75,4 @@ pytest
 
 ## Autor
 
-<Rikelme Martins> — [GitHub](https://github.com/RikelmeMartins)
+Rikelme Martins — [GitHub](https://github.com/RikelmeMartins)
