@@ -1,37 +1,26 @@
-/* ==========================================================================
-   Gestão de Eventos — estilo "accent ladder"
-   Uma cor (framboesa) em força total só em marcas pequenas: o botão principal,
-   as barras do calendário, o ícone da marca. Os tons claros dela fazem as áreas.
-   ========================================================================== */
-
 :root {
-  /* superfícies */
-  --ground: #fbf7f8;   /* fundo levemente puxado para a cor da marca */
-  --surface: #ffffff;  /* painéis brancos */
-  --raised: #f3f4f6;   /* cinza claro: item ativo, esqueletos de carregamento */
-  --border: #e5e7eb;   /* borda dos painéis */
-  --rule: #f2f2f2;     /* linha entre itens, mais clara que a borda */
-  --control: #d1d5db;  /* borda dos campos e botões, mais escura que a borda */
+  --ground: #fbf7f8;  
+  --surface: #ffffff;  
+  --raised: #f3f4f6;   
+  --border: #e5e7eb;   
+  --rule: #f2f2f2;     
+  --control: #d1d5db;  
 
-  /* texto */
   --text: #111827;
-  --muted: #5f6672;    /* texto secundário */
+  --muted: #5f6672;   
 
-  /* a cor da marca e seus tons */
   --accent: #b8336a;
   --accent-hover: #9e2a5a;
   --accent-soft: #fdf2f7;
   --accent-track: #f8dbe8;
   --accent-ink: #6b1d3e;
 
-  /* estados */
   --negative: #c4242a;
   --pill-negative-bg: #ffedea; --pill-negative-ink: #831c1e;
   --pill-neutral-bg: #f3f4f6;  --pill-neutral-ink: #374151;
   --pill-accent-bg: #fdf2f7;   --pill-accent-ink: #6b1d3e;
   --encerrado: #c9ccd2;
 
-  /* medidas */
   --radius-card: 8px;
   --radius-control: 6px;
   --gap: 24px;
@@ -39,7 +28,6 @@
   --control-height: 32px;
   --row-height: 56px;
 
-  /* tipo: uma família, poucos tamanhos */
   --font: "DM Sans", Inter, system-ui, sans-serif;
   --fs-title: 28px;
   --fs-section: 18px;
@@ -63,3 +51,63 @@ a { color: inherit; text-decoration: none; }
 button, input { font: inherit; color: inherit; }
 .num { font-variant-numeric: tabular-nums; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.topo {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  height: 56px;
+  padding: 0 var(--pad);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.marca { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.marca small { color: var(--muted); font-weight: 400; font-size: var(--fs-body); }
+.topo nav { display: flex; gap: 4px; }
+.topo nav a { height: 32px; display: inline-flex; align-items: center; padding: 0 10px; border-radius: 6px; color: var(--muted); }
+.topo nav a:hover { color: var(--text); }
+.topo nav a.active { background: var(--raised); color: var(--text); }
+.conta { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.conta .nome { color: var(--muted); }
+.topo .menu-botao, .menu-sheet { display: none; }
+
+.canvas { max-width: 1240px; margin: 0 auto; padding: 32px var(--pad) 64px; }
+
+.titulo { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: var(--gap); }
+.titulo h1 { font-size: var(--fs-title); line-height: 34px; font-weight: 700; letter-spacing: -0.01em; }
+.titulo p { margin-top: 6px; color: var(--muted); font-size: 15px; }
+.titulo p strong { color: var(--text); font-weight: 600; }
+
+.painel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 20px; min-width: 0; }
+.painel-cabecalho { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.painel-cabecalho h2 { font-size: var(--fs-section); line-height: 24px; font-weight: 600; }
+
+.botao {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: var(--control-height); padding: 0 14px;
+  border-radius: var(--radius-control); border: 1px solid var(--control);
+  background: var(--surface); font-weight: 500; cursor: pointer; white-space: nowrap;
+  transition: background-color 120ms ease, transform 80ms ease;
+}
+.botao:hover { background: var(--raised); }
+.botao:active { transform: scale(0.98); }
+.botao:disabled { cursor: not-allowed; color: var(--muted); background: var(--raised); }
+.botao-principal { background: var(--accent); border-color: var(--accent); color: #fff; }
+.botao-principal:hover { background: var(--accent-hover); }
+.botao-grande { height: 40px; }
+.botao-texto { border: 0; background: none; padding: 0; color: var(--text); font-weight: 500; cursor: pointer; text-underline-offset: 3px; }
+.botao-texto:hover { text-decoration: underline; }
+
+.erro { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 16px; border-radius: var(--radius-control); background: var(--pill-negative-bg); color: var(--pill-negative-ink); }
+
+.pagina-form { max-width: 420px; margin: 24px auto 0; }
+.pagina-form h1 { font-size: var(--fs-title); line-height: 34px; font-weight: 700; letter-spacing: -0.01em; }
+.pagina-form > p { margin: 6px 0 24px; color: var(--muted); font-size: 15px; }
+.form { display: grid; gap: 16px; }
+.campo { display: grid; gap: 8px; font-weight: 500; }
+.campo input { height: 40px; padding: 0 12px; border: 1px solid var(--control); border-radius: var(--radius-control); background: var(--surface); font-weight: 400; }
+.campo input[aria-invalid="true"] { border-color: var(--negative); }
+.erro-campo { color: var(--negative); font-weight: 400; font-size: 13px; }
+.rodape-form { margin-top: 20px; color: var(--muted); }
+.rodape-form a { color: var(--accent-ink); font-weight: 500; }
+.rodape-form a:hover { text-decoration: underline; text-underline-offset: 3px; }
