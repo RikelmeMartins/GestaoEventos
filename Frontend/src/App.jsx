@@ -1,28 +1,34 @@
-import { useEffect, useState } from "react";
-import api, { mensagemErro } from "./services/api";
-import { NOMES_SITUACAO, periodo, rotulo, situacao } from "./utils/datas";
+import { Link, Route, Routes } from "react-router-dom";
+import Topo from "./components/Topo";
+import Cadastro from "./pages/Cadastro";
+import EventoDetalhe from "./pages/EventoDetalhe";
+import Eventos from "./pages/Eventos";
+import Login from "./pages/Login";
+
+function NaoEncontrada() {
+  return (
+    <div className="titulo">
+      <div>
+        <h1>Página não encontrada</h1>
+        <p>O endereço não existe. <Link to="/" className="botao-texto">Ver os eventos</Link></p>
+      </div>
+    </div>
+  );
+}
 
 export default function App() {
-  const [eventos, setEventos] = useState([]);
-  const [erro, setErro] = useState("");
-
-  useEffect(() => {
-    api.get("/eventos/")
-      .then((resposta) => setEventos(resposta.data))
-      .catch((err) => setErro(mensagemErro(err)));
-  }, []);
-
   return (
-    <div style={{ padding: 24 }}>
-      <h1>Teste dos passos 1 a 4</h1>
-      {erro && <p>Erro: {erro}</p>}
-      <ul>
-        {eventos.map((e) => (
-          <li key={e.id}>
-            {e.titulo} · {rotulo(e.categoria)} · {periodo(e.data_inicial, e.data_fim)} · {NOMES_SITUACAO[situacao(e)]}
-          </li>
-        ))}
-      </ul>
-    </div>
+    <>
+      <Topo />
+      <main className="canvas">
+        <Routes>
+          <Route path="/" element={<Eventos />} />
+          <Route path="/eventos/:id" element={<EventoDetalhe />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/cadastro" element={<Cadastro />} />
+          <Route path="*" element={<NaoEncontrada />} />
+        </Routes>
+      </main>
+    </>
   );
 }
