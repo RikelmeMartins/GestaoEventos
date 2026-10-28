@@ -1,10 +1,11 @@
-export default function Marca() {
-    return (
-    <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
-      <rect x="2" y="4" width="20" height="18" rx="4" fill="var(--accent-soft)" stroke="var(--accent)" strokeWidth="1.5" />
-      <path d="M2 9.5h20" stroke="var(--accent)" strokeWidth="1.5" />
-      <path d="M7 2v4M17 2v4" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" />
-      <rect x="6" y="13" width="5" height="5" rx="1" fill="var(--accent)" />
+export default function Marca({ tamanho = 26 }) {
+  return (
+    <svg width={tamanho} height={tamanho} viewBox="0 0 32 32" aria-hidden="true">
+      <rect x="2" y="5" width="28" height="25" rx="6" fill="var(--accent)" />
+      <rect x="9" y="2" width="3.5" height="7" rx="1.75" fill="var(--accent-ink)" />
+      <rect x="19.5" y="2" width="3.5" height="7" rx="1.75" fill="var(--accent-ink)" />
+      <rect x="8" y="14" width="16" height="3" rx="1.5" fill="#fff" />
+      <rect x="8" y="20.5" width="10" height="3" rx="1.5" fill="#fff" />
     </svg>
   );
 }

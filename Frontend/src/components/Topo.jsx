@@ -34,7 +34,7 @@ export default function Topo() {
         <header className="topo">
             <Link to="/" className="marca" onClick={fechar}>
                 <Marca />
-                Gestão de Eventos <small>{semestreAtual().rotulo}</small>
+                Pauta <small>{semestreAtual().rotulo}</small>
             </Link>
 
             <nav aria-label="Principal">
