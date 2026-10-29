@@ -111,3 +111,34 @@ button, input { font: inherit; color: inherit; }
 .rodape-form { margin-top: 20px; color: var(--muted); }
 .rodape-form a { color: var(--accent-ink); font-weight: 500; }
 .rodape-form a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+.pilula { flex: none; display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 999px; font-size: var(--fs-small); font-weight: 500; white-space: nowrap; background: var(--pill-neutral-bg); color: var(--pill-neutral-ink); }
+.pilula.cancelado { background: var(--pill-negative-bg); color: var(--pill-negative-ink); }
+.pilula.acontecendo { background: var(--pill-accent-bg); color: var(--pill-accent-ink); }
+
+.abas { display: flex; gap: 24px; border-bottom: 1px solid var(--border); overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
+.abas button { flex: none; height: 40px; padding: 0; border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px; background: none; color: var(--muted); cursor: pointer; }
+.abas button:hover { color: var(--text); }
+.abas button[aria-selected="true"] { color: var(--text); font-weight: 500; border-bottom-color: var(--text); }
+.abas .contagem { margin-left: 6px; color: var(--muted); font-weight: 400; }
+
+.ferramentas { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 20px 0 8px; }
+.busca { width: 300px; height: 36px; padding: 0 12px; border: 1px solid var(--control); border-radius: var(--radius-control); background: var(--surface); }
+.busca::placeholder { color: #6b6b6b; }
+.total { color: var(--muted); }
+
+.tabela { width: 100%; border-collapse: collapse; }
+.tabela th { height: 40px; padding: 0 16px 0 0; text-align: left; font-size: var(--fs-small); font-weight: 400; color: var(--muted); white-space: nowrap; }
+.tabela td { height: var(--row-height); padding: 10px 16px 10px 0; border-top: 1px solid var(--border); vertical-align: middle; }
+.tabela th:last-child, .tabela td:last-child { padding-right: 0; }
+.tabela .num { text-align: right; }
+.tabela tbody tr { cursor: pointer; }
+.tabela tbody tr:hover td { background: var(--accent-soft); }
+.evento-nome { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 15px; }
+.evento-nome a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.sublinha { margin-top: 2px; color: var(--muted); font-size: 13px; }
+.unidade { color: var(--muted); }
+.so-celular { display: none; }
+
+.vazio { display: grid; place-items: center; min-height: 72px; padding: 16px; border: 1px dashed var(--control); border-radius: var(--radius-control); color: var(--muted); text-align: center; }
+.esqueleto { display: block; height: 14px; border-radius: 4px; background: var(--raised); }
