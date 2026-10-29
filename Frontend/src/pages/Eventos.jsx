@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api, { mensagemErro } from "../services/api";
 import { MESES, NOMES_SITUACAO, diasAte, periodo, rotulo, situacao } from "../utils/datas";
+import FaixaSemestre from "../components/FaixaSemestre";
 
 const ABAS = [
     { id: "proximos", nome: "Próximos", inclui: (s) => s === "proximo" || s === "acontecendo", vazio: "Nenhum evento marcado para os próximos dias." },
@@ -84,6 +85,15 @@ export default function Eventos() {
                     <button className="botao-texto" onClick={carregar}>Tentar de novo</button>
                 </div>
             ) : (
+            <>
+            {carregando ? (
+                <section className="painel semestre" aria-busy="true">
+                    <span className="esqueleto" style={{ width: 240, height: 20, marginBottom: 16 }} />
+                    <span className="esqueleto" style={{ height: 180 }} />
+                </section>
+            ) : (
+                <FaixaSemestre eventos={eventos} />
+            )}
             <section aria-label="Lista de eventos">
                 <div className="abas" role="tablist">
                     {ABAS.map((a) => (
@@ -147,6 +157,7 @@ export default function Eventos() {
                 </table>
                 )}
             </section>
+            </>
             )}
         </>
     );    
