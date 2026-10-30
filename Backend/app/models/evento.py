@@ -22,3 +22,4 @@ class Evento(db.Model):
 
     atividades = db.relationship("Atividade", back_populates="evento", cascade="all, delete-orphan", 
                                  order_by="Atividade.data_inicio")
+    inscricoes = db.relationship("Inscricao", back_populates="evento")

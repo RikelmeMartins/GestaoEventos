@@ -11,6 +11,7 @@ class Usuario(db.Model):
     email = db.Column(db.String(200), nullable=False, unique=True)
     senha_hash = db.Column(db.String(255), nullable=False)
     perfil = db.Column(db.String(200), nullable=False, default="participante")
+    inscricoes = db.relationship("Inscricao", back_populates="usuario")
 
     eventos_organizados = db.relationship("Evento", back_populates="organizador")
 
