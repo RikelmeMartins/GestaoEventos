@@ -26,10 +26,14 @@ O projeto tem uma **API REST em Flask** com PostgreSQL e uma **interface em Reac
 - Página do evento com a programação por dia e o botão **Salvar na agenda** (arquivo `.ics`)
 - Layout adaptado para celular
 
+### v1.1
+
+- Inscrições em eventos com controle de vagas, bloqueio de duplicidade e histórico (cancelar não apaga)
+- Botão de inscrição na página do evento
+
 ### Próximas versões (v2)
 
 - Painel do organizador (criar e editar eventos e atividades pelo site)
-- Inscrições com controle de vagas
 - Registro de presença
 - Emissão de certificados
 - Filtros por categoria, data e local
@@ -49,7 +53,7 @@ O projeto tem uma **API REST em Flask** com PostgreSQL e uma **interface em Reac
 ```
 ├── Backend/
 │   ├── app/
-│   │   ├── models/      → tabelas do banco (Usuario, Evento, Atividade)
+│   │   ├── models/      → tabelas do banco (Usuario, Evento, Atividade, Inscricao)
 │   │   ├── schemas/     → validação e formato do JSON (Marshmallow)
 │   │   ├── services/    → regras de negócio
 │   │   ├── routes/      → rotas da API
@@ -162,12 +166,21 @@ Todas as rotas começam com `/api`. As rotas protegidas pedem o cabeçalho `Auth
 | PUT/PATCH | `/atividades/<id>` | organizador dono ou admin | edita uma atividade |
 | DELETE | `/atividades/<id>` | organizador dono ou admin | exclui uma atividade |
 
+### Inscrições
+
+| Método | Rota | Acesso | Descrição |
+|---|---|---|---|
+| POST | `/eventos/<id>/inscricao` | logado | inscreve o usuário (respeita vagas) |
+| DELETE | `/eventos/<id>/inscricao` | logado | cancela a inscrição |
+| GET | `/inscricoes/minhas` | logado | inscrições do usuário |
+
 Os erros têm sempre o mesmo formato:
 
 ```json
 { "erro": "Dados inválidos", "detalhes": { "campo": ["mensagem"] } }
 ```
 
-## Autor
+## Autores
 
 Rikelme Martins — [GitHub](https://github.com/RikelmeMartins)
+Lucas Moreira - [GitHub](https://github.com/lucasm3)
