@@ -83,3 +83,30 @@ export function rotulo(texto) {
   const t = texto.replaceAll("_", " ");
   return t.charAt(0).toUpperCase() + t.slice(1);
 }
+
+const paraIcs = (iso) => iso.replace(/[-:]/g, "").slice(0, 15); // 20261110T080000
+const escaparIcs = (texto = "") => texto.replace(/[\\,;]/g, (c) => `\\${c}`).replace(/\n/g, "\\n");
+
+export function baixarIcs(evento) {
+  const linhas = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Gestao de Eventos//PT-BR",
+    "BEGIN:VEVENT",
+    `UID:evento-${evento.id}@gestao-eventos`,
+    `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").slice(0, 15)}Z`,
+    `DTSTART:${paraIcs(evento.data_inicial)}`,
+    `DTEND:${paraIcs(evento.data_fim)}`,
+    `SUMMARY:${escaparIcs(evento.titulo)}`,
+    `LOCATION:${escaparIcs(evento.local)}`,
+    `DESCRIPTION:${escaparIcs(evento.descricao ?? "")}`,
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ];
+  const arquivo = new Blob([linhas.join("\r\n")], { type: "text/calendar;charset=utf-8" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(arquivo);
+  link.download = `${evento.titulo}.ics`;
+  link.click();
+  URL.revokeObjectURL(link.href);
+}

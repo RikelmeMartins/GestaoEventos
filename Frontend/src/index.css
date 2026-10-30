@@ -142,3 +142,51 @@ button, input { font: inherit; color: inherit; }
 
 .vazio { display: grid; place-items: center; min-height: 72px; padding: 16px; border: 1px dashed var(--control); border-radius: var(--radius-control); color: var(--muted); text-align: center; }
 .esqueleto { display: block; height: 14px; border-radius: 4px; background: var(--raised); }
+
+.trilha { display: flex; gap: 8px; margin-bottom: 16px; color: var(--muted); }
+.trilha a:hover { color: var(--text); text-decoration: underline; text-underline-offset: 3px; }
+
+.cabecalho-evento { display: flex; align-items: center; gap: 20px; margin-bottom: var(--gap); }
+.cabecalho-evento .info { flex: 1; min-width: 0; }
+.cabecalho-evento h1 { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; font-size: var(--fs-title); line-height: 34px; font-weight: 700; letter-spacing: -0.01em; }
+.cabecalho-evento .meta { margin-top: 6px; color: var(--muted); font-size: 15px; }
+
+.folha { flex: none; width: 64px; border-radius: var(--radius-card); overflow: hidden; text-align: center; background: var(--surface); border: 1px solid var(--accent-track); }
+.folha .mes { display: block; padding: 3px 0; background: var(--accent); color: #fff; font-size: var(--fs-small); font-weight: 600; text-transform: uppercase; }
+.folha .dia { display: block; padding: 4px 0 6px; font-size: 26px; line-height: 30px; font-weight: 600; }
+.folha.cancelado { border-color: var(--border); }
+.folha.cancelado .mes, .folha.encerrado .mes { background: var(--muted); }
+
+.aviso-cancelado { margin-bottom: var(--gap); padding: 14px 16px; border-radius: var(--radius-control); background: var(--pill-negative-bg); color: var(--pill-negative-ink); }
+
+.numeros { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); margin-bottom: var(--gap); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); }
+.numeros div { padding: 16px 20px; }
+.numeros div + div { border-left: 1px solid var(--border); }
+.numeros dt { color: var(--muted); }
+.numeros dd { margin-top: 6px; font-size: var(--fs-kpi); line-height: 28px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.numeros dd small { margin-left: 4px; font-size: var(--fs-body); font-weight: 400; color: var(--muted); }
+
+.grade-detalhe { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--gap); align-items: start; }
+.programacao { grid-column: span 4; }
+.sobre { grid-column: span 2; }
+
+.dias { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 20px; }
+.dia h3 { padding-bottom: 8px; margin-bottom: 4px; border-bottom: 2px solid var(--accent); font-size: 15px; font-weight: 600; }
+.atividade { padding: 12px 0; border-bottom: 1px solid var(--rule); }
+.atividade:last-child { border-bottom: 0; }
+.atividade .horario { color: var(--accent-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+.atividade h4 { margin: 4px 0 2px; font-size: 15px; line-height: 20px; font-weight: 600; }
+.atividade .quem { color: var(--muted); font-size: 13px; }
+.atividade .pilula { margin-top: 8px; }
+
+.sobre .descricao { line-height: 22px; white-space: pre-line; }
+.ficha { margin-top: 16px; }
+.ficha div { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-top: 1px solid var(--rule); }
+.ficha dt { color: var(--muted); }
+.ficha dd { text-align: right; font-weight: 500; }
+
+.acoes-celular { display: none; }
+
+@media (max-width: 1000px) {
+  .programacao, .sobre { grid-column: 1 / -1; }
+}
