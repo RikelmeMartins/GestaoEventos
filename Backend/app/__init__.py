@@ -22,10 +22,12 @@ def create_app(config_class=None):
     from .routes.usuarios import bp as usuarios_bp
     from .commands import registrar_comandos
     from .routes.atividades import bp as atividades_bp
+    from .routes.inscricoes import bp as inscricoes_bp
     app.register_blueprint(atividades_bp)
     registrar_comandos(app)
     app.register_blueprint(eventos_bp)
     app.register_blueprint(usuarios_bp)
+    app.register_blueprint(inscricoes_bp)
 
 
     @app.get("/api/health")
