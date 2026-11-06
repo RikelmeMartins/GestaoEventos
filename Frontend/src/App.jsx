@@ -4,6 +4,8 @@ import Cadastro from "./pages/Cadastro";
 import EventoDetalhe from "./pages/EventoDetalhe";
 import Eventos from "./pages/Eventos";
 import Login from "./pages/Login";
+import RotaProtegida from "./components/RotaProtegida";
+import Painel from "./pages/Painel";
 
 function NaoEncontrada() {
   return (
@@ -27,6 +29,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/cadastro" element={<Cadastro />} />
           <Route path="*" element={<NaoEncontrada />} />
+          <Route path="/painel" element={<RotaProtegida><Painel /></RotaProtegida>} />
         </Routes>
       </main>
     </>
