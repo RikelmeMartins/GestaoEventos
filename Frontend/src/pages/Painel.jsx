@@ -26,6 +26,7 @@ export default function Painel() {
                     <h1>Meus eventos</h1>
                     <p>{ehAdmin ? "Todos os eventos do sistema." : "Os eventos que você organiza."}</p>
                 </div>
+                <Link to="/painel/novo" className="botao botao-principal">Novo evento</Link>
             </div>
 
             {erro && <div className="erro" role="alert"><span>{erro}</span></div>}
@@ -35,7 +36,7 @@ export default function Painel() {
                     {carregando ? (
                         <span className="esqueleto" style={{ height: 120 }} />
                     ) : meus.length === 0 ? (
-                    <p className="vazio">Você ainda não criou nenhum evento.</p>
+                    <p className="vazio">{ehAdmin ? "Nenhum evento cadastrado." : "Você ainda não criou nenhum evento."}</p>
                     ) : (
                         <ul className="lista-painel">
                             {meus.map((evento) => {
