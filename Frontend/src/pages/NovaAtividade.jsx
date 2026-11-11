@@ -4,7 +4,7 @@ import api, { errosDosCampos, mensagemErro } from "../services/api";
 
 const TIPOS = [
     {valor: "palestra", nome: "Palestra"},
-    {valor: "minicurso", nome: "Minicurso"},
+    {valor: "minicursos", nome: "Minicurso"},
     {valor: "workshop", nome: "Workshop"},
     {valor: "outro", nome: "Outro"},
 ];
@@ -85,6 +85,7 @@ export default function NovaAtividade() {
                                 <option key={t.valor} value={t.valor}>{t.nome}</option>
                             ))}
                         </select>
+                        {campos.tipo && <span className="erro-campo">{campos.tipo[0]}</span>}
                     </label>
 
                     {CAMPOS.map((c) => {
