@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import FolhaCalendario from "../components/FolhaCalendario";
 import api, { mensagemErro } from "../services/api";
+import { useAuth } from "../contexts/AuthContext";
 import {
     NOMES_SITUACAO, agruparPorDia, baixarIcs, dataCurta, diaDaSemana, diasAte, duracaoEmDias, hora, periodo, rotulo, situacao,
 } from "../utils/datas";
@@ -41,7 +42,7 @@ function Numeros({ evento, s }) {
     );
 }
 
-function Programacao({ atividades }) {
+function Programacao({ atividades, linkNova }) {
     const dias = agruparPorDia(atividades);
     return (
         <section className="painel programacao" aria-labelledby="titulo-programacao">
@@ -50,8 +51,9 @@ function Programacao({ atividades }) {
                 {dias.length > 0 && (
                     <span className="total">
                         {atividades.length} {atividades.length === 1 ? "atividade" : "atividades"} em {dias.length} {dias.length === 1 ? "dia" : "dias"}
-                    </span>
+                    </span>      
                 )}
+                {linkNova && <Link to={linkNova} className="botao">Adicionar atividade</Link>}
             </div>
 
             {dias.length === 0 ? (
@@ -83,6 +85,7 @@ export default function EventoDetalhe() {
     const { id } = useParams();
     const [evento, setEvento] = useState(null);
     const [erro, setErro] = useState("");
+    const { usuario, ehAdmin } = useAuth();
 
     useEffect(() => {
         setEvento(null);
@@ -125,6 +128,7 @@ export default function EventoDetalhe() {
 
     const s = situacao(evento);
     const podeSalvar = s === "proximo" || s === "acontecendo";
+    const podeGerenciar = s !== "cancelado" && (ehAdmin || evento.organizador?.id === usuario?.id);
     const botaoAgenda = (
         <button className="botao botao-grande" onClick={() => baixarIcs(evento)}>Salvar na agenda</button>
     );
@@ -153,7 +157,10 @@ export default function EventoDetalhe() {
             <Numeros evento={evento} s={s} />
         
             <div className="grade-detalhe">
-                <Programacao atividades={evento.atividades} />
+                <Programacao
+                    atividades={evento.atividades}
+                    linkNova={podeGerenciar ? `/painel/eventos/${evento.id}/atividades/nova` : null}
+                />
             
                 <section className="painel sobre" aria-labelledby="titulo-sobre">
                     <div className="painel-cabecalho">
