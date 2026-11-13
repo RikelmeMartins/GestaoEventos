@@ -34,6 +34,7 @@ export default function App() {
           <Route path="/painel/novo" element={<RotaProtegida><NovoEvento /></RotaProtegida>} />
           <Route path="/painel/eventos/:id/atividades/nova" element={<RotaProtegida><NovaAtividade /></RotaProtegida>} />
           <Route path="/painel/eventos/:id/editar" element={<RotaProtegida><NovoEvento /></RotaProtegida>} />
+          <Route path="/painel/eventos/:id/atividades/:atividadeId/editar" element={<RotaProtegida><NovaAtividade /></RotaProtegida>} />
           <Route path="*" element={<NaoEncontrada />} />
         </Routes>
       </main>

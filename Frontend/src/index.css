@@ -189,6 +189,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .acoes-celular { display: none; }
 
 .gerenciar { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.gerenciar-atividade { display: flex; gap: 12px; margin-top: 8px; }
 .lista-painel li { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; border-top: 1px solid var(--rule); }
 .lista-painel li:first-child { border-top: 0; }
 .lista-painel a { font-weight: 600; }
