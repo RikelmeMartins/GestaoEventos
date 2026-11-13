@@ -70,18 +70,12 @@ function Programacao({ atividades, linkNova, podeGerenciar, onExcluir }) {
                                         <h4>{a.titulo}</h4>
                                         <p className="quem">{[a.palestrante, a.local].filter(Boolean).join(" · ")}</p>
                                         <span className="pilula">{rotulo(a.tipo)}</span>
-                                        <li key={a.id} className="atividade">
-                                            <span className="horario">{hora(a.data_inicio)}–{hora(a.data_fim)}</span>
-                                            <h4>{a.titulo}</h4>
-                                            <p className="quem">{[a.palestrante, a.local].filter(Boolean).join(" · ")}</p>
-                                            <span className="pilula">{rotulo(a.tipo)}</span>
-                                            {podeGerenciar && (
-                                                <div className="gerenciar-atividade">
-                                                    <Link to={`/painel/eventos/${a.evento_id}/atividades/${a.id}/editar`} className="botao-texto">Editar</Link>
-                                                    <button className="botao-texto" onClick={() => onExcluir(a)}>Excluir</button>
-                                                </div>
-                                            )}
-                                        </li>
+                                        {podeGerenciar && (
+                                            <div className="gerenciar-atividade">
+                                                <Link to={`/painel/eventos/${a.evento_id}/atividades/${a.id}/editar`} className="botao-texto">Editar</Link>
+                                                <button className="botao-texto" onClick={() => onExcluir(a)}>Excluir</button>
+                                            </div>
+                                        )}
                                     </li>
                                 ))}
                             </ol>
