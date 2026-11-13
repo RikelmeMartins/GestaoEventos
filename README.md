@@ -16,19 +16,25 @@ O projeto tem uma **API REST em Flask** com PostgreSQL e uma **interface em Reac
 
 ## Funcionalidades
 
-### v1.0 (atual)
+### v1.0
 
 - Cadastro e login com três perfis: participante, organizador e administrador (JWT)
-- Eventos: criar, editar e cancelar (organizador dono do evento ou administrador)
-- Atividades de cada evento, com validação para ficarem dentro do período do evento
+- API de eventos: criar, editar e cancelar (organizador dono do evento ou administrador)
+- API de atividades de cada evento, com validação para ficarem dentro do período do evento
 - Lista de eventos com abas (Próximos, Encerrados, Todos) e busca por título, local ou categoria
 - Calendário do semestre com todos os eventos numa linha do tempo
 - Página do evento com a programação por dia e o botão **Salvar na agenda** (arquivo `.ics`)
 - Layout adaptado para celular
 
-### Próximas versões (v2)
+### v2.0 (em desenvolvimento)
 
-- Painel do organizador (criar e editar eventos e atividades pelo site)
+- Painel do organizador ("Meus eventos"), com acesso só para organizador e administrador
+- Criar, editar e cancelar eventos pelo site
+- Criar, editar e excluir atividades pelo site, direto na página do evento
+- Calendário do semestre sem os eventos cancelados
+
+### Próximas versões
+
 - Inscrições com controle de vagas
 - Registro de presença
 - Emissão de certificados
@@ -59,12 +65,24 @@ O projeto tem uma **API REST em Flask** com PostgreSQL e uma **interface em Reac
 │   └── run.py
 └── Frontend/
     └── src/
-        ├── pages/       → telas (Eventos, EventoDetalhe, Login, Cadastro)
-        ├── components/  → partes reutilizáveis (Topo, FaixaSemestre, ...)
+        ├── pages/       → telas (Eventos, EventoDetalhe, Login, Cadastro, Painel, NovoEvento, NovaAtividade)
+        ├── components/  → partes reutilizáveis (Topo, FaixaSemestre, RotaProtegida, ...)
         ├── contexts/    → login guardado (AuthContext)
         ├── services/    → conexão com a API (axios)
         └── utils/       → funções de datas
 ```
+
+## Telas do organizador (v2)
+
+| Endereço | Tela |
+|---|---|
+| `/painel` | Meus eventos (o administrador vê todos) |
+| `/painel/novo` | Criar evento |
+| `/painel/eventos/<id>/editar` | Editar evento |
+| `/painel/eventos/<id>/atividades/nova` | Adicionar atividade |
+| `/painel/eventos/<id>/atividades/<atividadeId>/editar` | Editar atividade |
+
+Cancelar o evento e excluir atividades são feitos pela página do evento. Os dois pedem confirmação.
 
 ## Como rodar
 
@@ -118,6 +136,16 @@ cd Backend
 flask criar-admin seu@email.com
 ```
 
+Depois de mudar o perfil, saia e entre de novo no site: o perfil fica guardado no token de login.
+
+### Problemas comuns
+
+- **`ModuleNotFoundError: No module named 'flask'`**: a venv não está ativada no terminal. Rode `source .venv/Scripts/activate` na pasta `Backend`.
+- **`DLL load failed ... Uma política de Controle de Aplicativo bloqueou este arquivo`** (Windows 11): o Controle Inteligente de Aplicativos bloqueou um arquivo compilado do SQLAlchemy. Reinstale-o sem as partes compiladas:
+  ```bash
+  DISABLE_SQLALCHEMY_CEXT=1 pip install --force-reinstall --no-deps --no-binary sqlalchemy SQLAlchemy==2.1.4
+  ```
+
 ## Variáveis de ambiente
 
 Ficam no arquivo `Backend/.env` (use o `.env.example` como modelo):
@@ -161,6 +189,8 @@ Todas as rotas começam com `/api`. As rotas protegidas pedem o cabeçalho `Auth
 | GET | `/atividades/<id>` | público | detalhe de uma atividade |
 | PUT/PATCH | `/atividades/<id>` | organizador dono ou admin | edita uma atividade |
 | DELETE | `/atividades/<id>` | organizador dono ou admin | exclui uma atividade |
+
+Os tipos de atividade aceitos são `palestra`, `minicursos`, `workshop` e `outro`.
 
 Os erros têm sempre o mesmo formato:
 

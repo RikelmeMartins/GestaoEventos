@@ -13,7 +13,7 @@ const CAMPOS = [
 
 const VAZIO = { titulo: "", categoria: "", local: "", data_inicial: "", data_fim: "", vagas: "", descricao: "" };
 
-export default function NovoEvento(params) {
+export default function NovoEvento() {
     const { id } = useParams();
     const editando = Boolean(id);
     const navigate = useNavigate();
