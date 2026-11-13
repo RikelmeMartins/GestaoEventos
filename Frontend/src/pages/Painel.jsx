@@ -47,7 +47,10 @@ export default function Painel() {
                                             <Link to={`/eventos/${evento.id}`}>{evento.titulo}</Link>
                                             <p>{periodo(evento.data_inicial, evento.data_fim)} · {evento.local}</p>
                                         </div>
-                                        <span className={`pilula ${s}`}>{NOMES_SITUACAO[s]}</span>
+                                        <div className="lado">
+                                            <span className={`pilula ${s}`}>{NOMES_SITUACAO[s]}</span>
+                                            {s !== "cancelado" && <Link to={`/painel/eventos/${evento.id}/editar`} className="botao-texto">Editar</Link>}
+                                        </div>
                                     </li>
                                 );
                             })}

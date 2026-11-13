@@ -95,6 +95,16 @@ export default function EventoDetalhe() {
             .catch((err) => setErro(mensagemErro(err)));
     }, [id]);
 
+    async function cancelarEvento() {
+        if (!window.confirm("Cancelar este evento? Essa ação não pode ser desfeita.")) return;
+        try {
+            const { data } = await api.post(`/eventos/${id}/cancelar`);
+            setEvento(data);
+        } catch (err) {
+            alert(mensagemErro(err));
+        }
+    }
+
     const trilha = (
         <nav className="trilha" aria-label="Você está em">
             <Link to="/">Eventos</Link> <span aria-hidden="true">/</span> <span>{evento?.titulo ?? "…"}</span>
@@ -175,6 +185,12 @@ export default function EventoDetalhe() {
                         <div><dt>Categoria</dt><dd>{rotulo(evento.categoria)}</dd></div>
                         <div><dt>Publicado em</dt><dd>{evento.criado_em ? dataCurta(evento.criado_em) : "—"}</dd></div>
                     </dl>
+                    {podeGerenciar && (
+                        <div className="gerenciar">
+                            <Link to={`/painel/eventos/${evento.id}/editar`} className="botao">Editar evento</Link>
+                            <button className="botao" onClick={cancelarEvento}>Cancelar evento</button>
+                        </div>
+                    )}
                 </section>
             </div>
         </>

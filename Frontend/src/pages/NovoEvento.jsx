@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import api, { errosDosCampos, mensagemErro } from "../services/api";
 
 const CAMPOS = [
@@ -14,12 +14,29 @@ const CAMPOS = [
 const VAZIO = { titulo: "", categoria: "", local: "", data_inicial: "", data_fim: "", vagas: "", descricao: "" };
 
 export default function NovoEvento(params) {
+    const { id } = useParams();
+    const editando = Boolean(id);
     const navigate = useNavigate();
 
     const [dados, setDados] = useState(VAZIO);
     const [erro, setErro] = useState("");
     const [campos, setCampos] = useState({});
     const [enviando, setEnviando] = useState(false);
+
+    useEffect(() => {
+    if (!editando) return;
+    api.get(`/eventos/${id}`)
+        .then(({ data }) => setDados({
+            titulo: data.titulo,
+            categoria: data.categoria,
+            local: data.local,
+            data_inicial: data.data_inicial.slice(0, 16),
+            data_fim: data.data_fim.slice(0, 16),
+            vagas: String(data.vagas),
+            descricao: data.descricao ?? "",
+        }))
+        .catch((err) => setErro(mensagemErro(err)));
+    }, [id, editando]);
 
     function alterar(e) {
         setDados({ ...dados, [e.target.name]: e.target.value});
@@ -31,11 +48,10 @@ export default function NovoEvento(params) {
         setCampos({});
         setEnviando(true);
         try {
-            const { data } = await api.post("/eventos/", {
-                ...dados,
-                vagas: Number(dados.vagas),
-                descricao: dados.descricao || null,
-            });
+            const corpo = { ...dados, vagas: Number(dados.vagas), descricao: dados.descricao || null};
+            const { data } = editando
+                ? await api.put(`/eventos/${id}`, corpo)
+                : await api.post("/eventos/", corpo);
             navigate(`/eventos/${data.id}`);
         } catch (error) {
             setErro(mensagemErro(error));
@@ -48,12 +64,12 @@ export default function NovoEvento(params) {
     return (
         <>
             <nav className="trilha" aria-label="Você está em">
-                <Link to="/painel">Meus eventos</Link> <span aria-hidden="true">/</span> <span>Novo evento</span>
+                <Link to="/painel">Meus eventos</Link> <span aria-hidden="true">/</span> <span>{editando ? "Editar evento" : "Novo evento"}</span>
             </nav>
 
             <div className="pagina-form">
-                <h1>Novo evento</h1>
-                <p>Depois de criar, você poderá adicionar as atividades.</p>
+                <h1>{editando ? "Editar evento" : "Novo evento"}</h1>
+                {!editando && <p>Depois de criar, você poderá adicionar as atividades.</p>}
 
                 <form className="painel form" onSubmit={enviar}>
                     {erro && <p className="erro" role="alert">{erro}</p>}
@@ -80,7 +96,7 @@ export default function NovoEvento(params) {
                     </label>
 
                     <button className="botao botao-principal botao-grande" disabled={enviando}>
-                        {enviando ? "Criando…" : "Criar evento"}
+                        {enviando ? "Salvando…" : editando ? "Atualizar evento" : "Criar evento"}
                     </button>
                 </form>
             </div>
