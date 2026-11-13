@@ -20,7 +20,8 @@ const CAMPOS = [
 const VAZIO = { titulo: "", tipo: "palestra", palestrante: "", local: "", data_inicio: "", data_fim: "", descricao: "" };
 
 export default function NovaAtividade() {
-    const { id } = useParams();
+    const { id, atividadeId } = useParams();
+    const editando = Boolean(atividadeId);
     const navigate = useNavigate();
 
     const [evento, setEvento] = useState(null);
@@ -31,9 +32,27 @@ export default function NovaAtividade() {
 
     useEffect(() => {
         api.get(`/eventos/${id}`)
-            .then((resposta) => setEvento(resposta.data))
-            .catch((err) => setErro(mensagemErro(err)))
-    }, [id]);
+            .then(({ data }) => {
+                setEvento(data);
+                if (!editando) return;
+
+                const atividade = data.atividades.find((a) => a.id === Number(atividadeId));
+                if (!atividade) {
+                    setErro("Atividade não encontrada neste evento.");
+                    return;
+                }
+                setDados({
+                    titulo: atividade.titulo,
+                    tipo: atividade.tipo,
+                    palestrante: atividade.palestrante ?? "",
+                    local: atividade.local ?? "",
+                    data_inicio: atividade.data_inicio.slice(0, 16),
+                    data_fim: atividade.data_fim.slice(0, 16),
+                    descricao: atividade.descricao ?? "",
+                });
+            })
+            .catch((err) => setErro(mensagemErro(err)));
+    }, [id, atividadeId, editando]);
 
     function alterar (e) {
         setDados({ ...dados, [e.target.name]: e.target.value});
@@ -45,12 +64,14 @@ export default function NovaAtividade() {
         setCampos({});
         setEnviando(true);
         try {
-            await api.post(`/eventos/${id}/atividades`, {
+            const corpo = {
                 ...dados,
                 palestrante: dados.palestrante || null,
                 local: dados.local || null,
                 descricao: dados.descricao || null,
-            });
+            };
+            if (editando) await api.put(`/atividades/${atividadeId}`, corpo);
+            else await api.post(`/eventos/${id}/atividades`, corpo);
             navigate(`/eventos/${id}`);
         } catch (error) {
             setErro(mensagemErro(error));
@@ -68,11 +89,11 @@ export default function NovaAtividade() {
             <nav className="trilha" aria-label="Você está em">
                 <Link to="/painel">Meus eventos</Link> <span aria-hidden="true">/</span>{" "}
                 <Link to={`/eventos/${id}`}>{evento?.titulo ?? "…"}</Link> <span aria-hidden="true">/</span>{" "}
-                <span>Nova atividade</span>
+                <span>{editando ? "Editar atividade" : "Nova atividade"}</span>
             </nav>
 
             <div className="pagina-form">
-                <h1>Nova atividade</h1>
+                <h1>{editando ? "Editar atividade" : "Nova atividade"}</h1>
                 <p>{evento ? `Em ${evento.titulo}` : "Carregando evento…"}</p>
 
                 <form className="painel form" onSubmit={enviar}>
@@ -114,7 +135,7 @@ export default function NovaAtividade() {
                     </label>
 
                     <button className="botao botao-principal botao-grande" disabled={enviando || !evento}>
-                        {enviando ? "Salvando…" : "Adicionar atividade"}
+                        {enviando ? "Salvando…" : editando ? "Atualizar atividade" : "Adicionar atividade"}
                     </button>
                 </form>
             </div>

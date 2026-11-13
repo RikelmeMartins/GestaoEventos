@@ -42,7 +42,7 @@ function Numeros({ evento, s }) {
     );
 }
 
-function Programacao({ atividades, linkNova }) {
+function Programacao({ atividades, linkNova, podeGerenciar, onExcluir }) {
     const dias = agruparPorDia(atividades);
     return (
         <section className="painel programacao" aria-labelledby="titulo-programacao">
@@ -70,6 +70,18 @@ function Programacao({ atividades, linkNova }) {
                                         <h4>{a.titulo}</h4>
                                         <p className="quem">{[a.palestrante, a.local].filter(Boolean).join(" · ")}</p>
                                         <span className="pilula">{rotulo(a.tipo)}</span>
+                                        <li key={a.id} className="atividade">
+                                            <span className="horario">{hora(a.data_inicio)}–{hora(a.data_fim)}</span>
+                                            <h4>{a.titulo}</h4>
+                                            <p className="quem">{[a.palestrante, a.local].filter(Boolean).join(" · ")}</p>
+                                            <span className="pilula">{rotulo(a.tipo)}</span>
+                                            {podeGerenciar && (
+                                                <div className="gerenciar-atividade">
+                                                    <Link to={`/painel/eventos/${a.evento_id}/atividades/${a.id}/editar`} className="botao-texto">Editar</Link>
+                                                    <button className="botao-texto" onClick={() => onExcluir(a)}>Excluir</button>
+                                                </div>
+                                            )}
+                                        </li>
                                     </li>
                                 ))}
                             </ol>
@@ -100,6 +112,16 @@ export default function EventoDetalhe() {
         try {
             const { data } = await api.post(`/eventos/${id}/cancelar`);
             setEvento(data);
+        } catch (err) {
+            alert(mensagemErro(err));
+        }
+    }
+
+    async function excluirAtividade(atividade) {
+        if (!window.confirm(`Excluir a atividade "${atividade.titulo}"?`)) return;
+        try {
+            await api.delete(`/atividades/${atividade.id}`);
+            setEvento({ ...evento, atividades: evento.atividades.filter((a) => a.id !== atividade.id) });
         } catch (err) {
             alert(mensagemErro(err));
         }
@@ -170,8 +192,10 @@ export default function EventoDetalhe() {
                 <Programacao
                     atividades={evento.atividades}
                     linkNova={podeGerenciar ? `/painel/eventos/${evento.id}/atividades/nova` : null}
+                    podeGerenciar={podeGerenciar}
+                    onExcluir={excluirAtividade}
                 />
-            
+                            
                 <section className="painel sobre" aria-labelledby="titulo-sobre">
                     <div className="painel-cabecalho">
                         <h2 id="titulo-sobre">Sobre o evento</h2>
