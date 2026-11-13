@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import FolhaCalendario from "../components/FolhaCalendario";
 import api, { mensagemErro } from "../services/api";
+import { useAuth } from "../contexts/AuthContext";
 import {
     NOMES_SITUACAO, agruparPorDia, baixarIcs, dataCurta, diaDaSemana, diasAte, duracaoEmDias, hora, periodo, rotulo, situacao,
 } from "../utils/datas";
@@ -41,7 +42,7 @@ function Numeros({ evento, s }) {
     );
 }
 
-function Programacao({ atividades }) {
+function Programacao({ atividades, linkNova, podeGerenciar, onExcluir }) {
     const dias = agruparPorDia(atividades);
     return (
         <section className="painel programacao" aria-labelledby="titulo-programacao">
@@ -50,8 +51,9 @@ function Programacao({ atividades }) {
                 {dias.length > 0 && (
                     <span className="total">
                         {atividades.length} {atividades.length === 1 ? "atividade" : "atividades"} em {dias.length} {dias.length === 1 ? "dia" : "dias"}
-                    </span>
+                    </span>      
                 )}
+                {linkNova && <Link to={linkNova} className="botao">Adicionar atividade</Link>}
             </div>
 
             {dias.length === 0 ? (
@@ -68,6 +70,12 @@ function Programacao({ atividades }) {
                                         <h4>{a.titulo}</h4>
                                         <p className="quem">{[a.palestrante, a.local].filter(Boolean).join(" · ")}</p>
                                         <span className="pilula">{rotulo(a.tipo)}</span>
+                                        {podeGerenciar && (
+                                            <div className="gerenciar-atividade">
+                                                <Link to={`/painel/eventos/${a.evento_id}/atividades/${a.id}/editar`} className="botao-texto">Editar</Link>
+                                                <button className="botao-texto" onClick={() => onExcluir(a)}>Excluir</button>
+                                            </div>
+                                        )}
                                     </li>
                                 ))}
                             </ol>
@@ -83,6 +91,7 @@ export default function EventoDetalhe() {
     const { id } = useParams();
     const [evento, setEvento] = useState(null);
     const [erro, setErro] = useState("");
+    const { usuario, ehAdmin } = useAuth();
 
     useEffect(() => {
         setEvento(null);
@@ -91,6 +100,26 @@ export default function EventoDetalhe() {
             .then((resposta) => setEvento(resposta.data))
             .catch((err) => setErro(mensagemErro(err)));
     }, [id]);
+
+    async function cancelarEvento() {
+        if (!window.confirm("Cancelar este evento? Essa ação não pode ser desfeita.")) return;
+        try {
+            const { data } = await api.post(`/eventos/${id}/cancelar`);
+            setEvento(data);
+        } catch (err) {
+            alert(mensagemErro(err));
+        }
+    }
+
+    async function excluirAtividade(atividade) {
+        if (!window.confirm(`Excluir a atividade "${atividade.titulo}"?`)) return;
+        try {
+            await api.delete(`/atividades/${atividade.id}`);
+            setEvento({ ...evento, atividades: evento.atividades.filter((a) => a.id !== atividade.id) });
+        } catch (err) {
+            alert(mensagemErro(err));
+        }
+    }
 
     const trilha = (
         <nav className="trilha" aria-label="Você está em">
@@ -125,6 +154,7 @@ export default function EventoDetalhe() {
 
     const s = situacao(evento);
     const podeSalvar = s === "proximo" || s === "acontecendo";
+    const podeGerenciar = s !== "cancelado" && (ehAdmin || evento.organizador?.id === usuario?.id);
     const botaoAgenda = (
         <button className="botao botao-grande" onClick={() => baixarIcs(evento)}>Salvar na agenda</button>
     );
@@ -153,8 +183,13 @@ export default function EventoDetalhe() {
             <Numeros evento={evento} s={s} />
         
             <div className="grade-detalhe">
-                <Programacao atividades={evento.atividades} />
-            
+                <Programacao
+                    atividades={evento.atividades}
+                    linkNova={podeGerenciar ? `/painel/eventos/${evento.id}/atividades/nova` : null}
+                    podeGerenciar={podeGerenciar}
+                    onExcluir={excluirAtividade}
+                />
+                            
                 <section className="painel sobre" aria-labelledby="titulo-sobre">
                     <div className="painel-cabecalho">
                         <h2 id="titulo-sobre">Sobre o evento</h2>
@@ -168,6 +203,12 @@ export default function EventoDetalhe() {
                         <div><dt>Categoria</dt><dd>{rotulo(evento.categoria)}</dd></div>
                         <div><dt>Publicado em</dt><dd>{evento.criado_em ? dataCurta(evento.criado_em) : "—"}</dd></div>
                     </dl>
+                    {podeGerenciar && (
+                        <div className="gerenciar">
+                            <Link to={`/painel/eventos/${evento.id}/editar`} className="botao">Editar evento</Link>
+                            <button className="botao" onClick={cancelarEvento}>Cancelar evento</button>
+                        </div>
+                    )}
                 </section>
             </div>
         </>

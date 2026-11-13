@@ -7,7 +7,7 @@ import Marca from "./Marca";
 const NOMES_PERFIL = { participante: "Participante", organizador: "Organizador", administrador: "Administrador"};
 
 export default function Topo() {
-    const { usuario, logout } = useAuth();
+    const { usuario, logout, ehOrganizador } = useAuth();
     const navigate = useNavigate();
     const [aberto, setAberto] = useState(false);
 
@@ -39,6 +39,7 @@ export default function Topo() {
 
             <nav aria-label="Principal">
                 <NavLink to="/" end>Eventos</NavLink>
+                {ehOrganizador && <NavLink to="/painel">Meus eventos</NavLink>}
             </nav>
 
             <div className="conta">{conta}</div>
@@ -50,6 +51,7 @@ export default function Topo() {
             {aberto && (
                 <div className="menu-sheet">
                     <NavLink to="/" end onClick={fechar}>Eventos</NavLink>
+                    {ehOrganizador && <NavLink to="/painel" onClick={fechar}>Meus eventos</NavLink>}
                     {conta}
                 </div>
             )}
