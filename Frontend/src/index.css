@@ -188,11 +188,14 @@ button, input, textarea, select { font: inherit; color: inherit; }
 
 .acoes-celular { display: none; }
 
+.gerenciar { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
 .lista-painel li { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; border-top: 1px solid var(--rule); }
 .lista-painel li:first-child { border-top: 0; }
 .lista-painel a { font-weight: 600; }
 .lista-painel a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .lista-painel p { margin-top: 2px; color: var(--muted); font-size: 13px; }
+.lista-painel .lado { display: flex; align-items: center; gap: 12px; flex: none; }
+.lista-painel .lado a { font-weight: 500; }
 
 @media (max-width: 1000px) {
   .programacao, .sobre { grid-column: 1 / -1; }

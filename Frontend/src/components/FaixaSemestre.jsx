@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { data, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { MESES, semestreAtual, situacao } from "../utils/datas";
 
 export default function FaixaSemestre({ eventos, agora = new Date() }) {
@@ -9,11 +9,13 @@ export default function FaixaSemestre({ eventos, agora = new Date() }) {
     const posicao = (data) => Math.min(100, Math.max(0, ((new Date(data) - semestre.inicio) / total) * 100));
 
     const doSemestre = eventos
-        .filter((e) => new Date(e.data_fim) >= semestre.inicio && new Date(e.data_inicial) < semestre.fim)
+        .filter((e) => e.status !== "cancelado"
+            && new Date(e.data_fim) >= semestre.inicio 
+            && new Date(e.data_inicial) < semestre.fim)
         .sort((a, b) => a.data_inicial.localeCompare(b.data_inicial));
 
     const meses = [];
-    for (let d = new Date(semestre.inicio); d < semestre.fim; d = new Date(d.getFullYear, d.getMonth() + 1, 1)){
+    for (let d = new Date(semestre.inicio); d < semestre.fim; d = new Date(d.getFullYear(), d.getMonth() + 1, 1)){
         const nome = MESES[d.getMonth()];
         meses.push({ nome: nome.charAt(0).toUpperCase() + nome.slice(1), esquerda: posicao(d)});
     }
@@ -34,7 +36,6 @@ export default function FaixaSemestre({ eventos, agora = new Date() }) {
                 <div className="legenda">
                     <span><i className="proximo" /> Próximo</span>
                     <span><i className="encerrado" /> Encerrado</span>
-                    <span><i className="cancelado" /> Cancelado</span>
                 </div>
             </div>
 
