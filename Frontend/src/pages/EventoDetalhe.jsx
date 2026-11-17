@@ -21,8 +21,15 @@ function Numeros({ evento, s }) {
         ultimo = faltam === 1 ? { rotulo: "Começa", valor: "Amanhã" } : { rotulo: "Começa em", valor: faltam, unidade: "dias" };
     }
 
+    const aberto = s === "proximo" || s === "acontecendo";
+    const vagas = !aberto
+        ? { rotulo: "Vagas", valor: evento.vagas, unidade: "lugares" }
+        : evento.vagas_disponiveis === 0
+            ? { rotulo: "Vagas", valor: "Esgotado" } 
+            : { rotulo: "Vagas restantes", valor: evento.vagas_disponiveis, unidade: `de ${evento.vagas}` };
+
     const itens = [
-        { rotulo: "Vagas", valor: evento.vagas, unidade: "lugares" },
+        vagas,
         { rotulo: "Atividades", valor: evento.atividades.length },
         dias > 1
             ? { rotulo: "Duração", valor: dias, unidade: "dias" }
@@ -197,9 +204,10 @@ export default function EventoDetalhe() {
         <button className="botao botao-grande" onClick={() => baixarIcs(evento)}>Salvar na agenda</button>
     );
 
+    const esgotado = evento.vagas_disponiveis === 0 && !inscrito;
     const botaoInscricao = (
-        <button className="botao botao-principal botao-grande" onClick={alternarInscricao} disabled={enviando}>
-            {enviando ? "Aguarde…" : inscrito ? "Cancelar inscrição" : "Inscrever-se"}
+        <button className="botao botao-principal botao-grande" onClick={alternarInscricao} disabled={enviando || esgotado}>
+            {enviando ? "Aguarde…" : esgotado ? "Vagas esgotadas" : inscrito ? "Cancelar inscrição" : "Inscrever-se"}
         </button>
     );
 
