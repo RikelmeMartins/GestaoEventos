@@ -5,6 +5,8 @@ from app.schemas.evento_schemas import EventoSchema
 from app.auth import admin, usuario_atual
 from marshmallow import ValidationError
 from app.services.inscricao_service import contar_ativas
+from app.models.inscricao import Inscricao
+from app.models.usuario import Usuario
 
 evento_schema = EventoSchema()
 
@@ -74,3 +76,14 @@ def validar_mudancas(evento, novos):
 
     if erros:
         raise ValidationError(erros)
+
+def listar_inscritos(id):
+    evento = buscar_evento_gerenciavel(id)
+    consulta = (
+        db.select(Inscricao)
+        .join(Inscricao.usuario)
+        .where(Inscricao.evento_id == evento.id, Inscricao.status == "ativa")
+        .order_by(Usuario.nome)
+    )
+
+    return db.session.scalars(consulta).all()
