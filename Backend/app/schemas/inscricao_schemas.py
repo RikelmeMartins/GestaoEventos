@@ -16,3 +16,13 @@ class InscricaoSchema(Schema):
     usuario_id = fields.Int(dump_only=True)
     evento_id = fields.Int(dump_only=True)
     evento = fields.Nested(EventoResumoSchema, dump_only=True)
+
+class ParticipantesSchema(Schema):
+    id = fields.Int()
+    nome = fields.Str()
+    email = fields.Str()
+
+class InscritoSchema(Schema):
+    id = fields.Int(dump_only=True)
+    criado_em = fields.DateTime(dump_only=True)
+    usuario = fields.Nested(ParticipantesSchema, dump_only=True)
