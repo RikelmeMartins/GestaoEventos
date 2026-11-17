@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import FolhaCalendario from "../components/FolhaCalendario";
-import api, { mensagemErro } from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
+import api, { mensagemErro } from "../services/api";
 import {
     NOMES_SITUACAO, agruparPorDia, baixarIcs, dataCurta, diaDaSemana, diasAte, duracaoEmDias, hora, periodo, rotulo, situacao,
 } from "../utils/datas";
@@ -55,7 +55,6 @@ function Programacao({ atividades, linkNova, podeGerenciar, onExcluir }) {
                 )}
                 {linkNova && <Link to={linkNova} className="botao">Adicionar atividade</Link>}
             </div>
-
             {dias.length === 0 ? (
                 <p className="vazio">A programação deste evento ainda não foi publicada.</p>
             ) : (
@@ -89,17 +88,55 @@ function Programacao({ atividades, linkNova, podeGerenciar, onExcluir }) {
 
 export default function EventoDetalhe() {
     const { id } = useParams();
+    const { usuario, ehAdmin } = useAuth();
+    const navigate = useNavigate();
+    const location = useLocation();
+
     const [evento, setEvento] = useState(null);
     const [erro, setErro] = useState("");
-    const { usuario, ehAdmin } = useAuth();
+    const [inscrito, setInscrito] = useState(false);
+    const [enviando, setEnviando] = useState(false);
+    const [erroInscricao, setErroInscricao] = useState("");
+
+    const carregar = useCallback(async () => {
+        try {
+            const { data } = await api.get(`/eventos/${id}`);
+            setEvento(data);
+            if (usuario) {
+                const minhas = await api.get("/inscricoes/minhas");
+                setInscrito(minhas.data.some((i) => i.evento_id === data.id && i.status === "ativa"));
+            } else {
+                setInscrito(false);
+            }
+        } catch (err) {
+            setErro(mensagemErro(err));
+        }
+    }, [id, usuario]);
 
     useEffect(() => {
         setEvento(null);
         setErro("");
-        api.get(`/eventos/${id}`)
-            .then((resposta) => setEvento(resposta.data))
-            .catch((err) => setErro(mensagemErro(err)));
-    }, [id]);
+        setErroInscricao("");
+        carregar();
+    }, [carregar]);
+
+    async function alternarInscricao() {
+        if (!usuario) {
+            navigate("/login", { state: { de: location.pathname } });
+            return;
+        }
+        setErroInscricao("");
+        setEnviando(true);
+        try {
+            if (inscrito) await api.delete(`/eventos/${id}/inscricao`);
+            else await api.post(`/eventos/${id}/inscricao`);
+            await carregar();
+        } catch (err) {
+            setErroInscricao(mensagemErro(err));
+        } finally {
+            setEnviando(false);
+        }
+    }
 
     async function cancelarEvento() {
         if (!window.confirm("Cancelar este evento? Essa ação não pode ser desfeita.")) return;
@@ -155,13 +192,21 @@ export default function EventoDetalhe() {
     const s = situacao(evento);
     const podeSalvar = s === "proximo" || s === "acontecendo";
     const podeGerenciar = s !== "cancelado" && (ehAdmin || evento.organizador?.id === usuario?.id);
+
     const botaoAgenda = (
         <button className="botao botao-grande" onClick={() => baixarIcs(evento)}>Salvar na agenda</button>
+    );
+
+    const botaoInscricao = (
+        <button className="botao botao-principal botao-grande" onClick={alternarInscricao} disabled={enviando}>
+            {enviando ? "Aguarde…" : inscrito ? "Cancelar inscrição" : "Inscrever-se"}
+        </button>
     );
 
     return (
         <>
             {trilha}
+
             <header className="cabecalho-evento">
                 <FolhaCalendario data={evento.data_inicial} situacao={s} />
                 <div className="info">
@@ -171,17 +216,20 @@ export default function EventoDetalhe() {
                     </h1>
                     <p className="meta">{periodo(evento.data_inicial, evento.data_fim)} · {evento.local}</p>
                 </div>
-                {podeSalvar && <div className="acoes">{botaoAgenda}</div>}
+                {podeSalvar && <div className="acoes">{botaoInscricao} {botaoAgenda}</div>}
             </header>
-        
-            {podeSalvar && <div className="acoes-celular">{botaoAgenda}</div>}
-        
+
+            {podeSalvar && <div className="acoes-celular">{botaoInscricao}{botaoAgenda}</div>}
+
+            {erroInscricao && <p className="erro" role="alert">{erroInscricao}</p>}
+            {inscrito && podeSalvar && <p className="meta">Você está inscrito neste evento.</p>}
+
             {s === "cancelado" && (
                 <p className="aviso-cancelado">Este evento foi cancelado. {evento.descricao}</p>
             )}
 
             <Numeros evento={evento} s={s} />
-        
+
             <div className="grade-detalhe">
                 <Programacao
                     atividades={evento.atividades}
@@ -189,7 +237,7 @@ export default function EventoDetalhe() {
                     podeGerenciar={podeGerenciar}
                     onExcluir={excluirAtividade}
                 />
-                            
+
                 <section className="painel sobre" aria-labelledby="titulo-sobre">
                     <div className="painel-cabecalho">
                         <h2 id="titulo-sobre">Sobre o evento</h2>
@@ -212,5 +260,5 @@ export default function EventoDetalhe() {
                 </section>
             </div>
         </>
-    );  
+    );
 }
