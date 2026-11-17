@@ -1,5 +1,6 @@
 from marshmallow import fields, Schema, ValidationError, validate, validates_schema
 from app.schemas.atividade_schemas import AtividadeSchema
+from app.services.inscricao_service import vagas_disponiveis
 
 class ResponsalvelSchema(Schema):
     id = fields.Int()
@@ -18,6 +19,7 @@ class EventoSchema(Schema):
     criado_em = fields.DateTime(dump_only=True)
     organizador = fields.Nested(ResponsalvelSchema, dump_only=True)
     atividades = fields.Nested(AtividadeSchema, many=True, dump_only=True)
+    vagas_disponiveis = fields.Function(vagas_disponiveis)
 
     @validates_schema
     def validar_datas(self, dados, **kwargs):

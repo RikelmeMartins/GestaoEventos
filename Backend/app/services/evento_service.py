@@ -3,6 +3,8 @@ from app.extensions import db
 from app.models.evento import Evento
 from app.schemas.evento_schemas import EventoSchema
 from app.auth import admin, usuario_atual
+from marshmallow import ValidationError
+from app.services.inscricao_service import contar_ativas
 
 evento_schema = EventoSchema()
 
@@ -31,7 +33,10 @@ def atualizar_evento(id, dados, parcial=False):
         }
         dados = {**atuais, **dados}
 
-    for campo, valor in evento_schema.load(dados).items():
+    novos = evento_schema.load(dados)
+    validar_mudancas(evento, novos)
+
+    for campo, valor in novos.items():
         setattr(evento, campo, valor)
 
     db.session.commit()
@@ -54,3 +59,18 @@ def buscar_evento_gerenciavel(id):
         abort(403, description="Apenas o responsável pelo evento pode gerenciá-lo.")
 
     return evento
+
+def validar_mudancas(evento, novos):
+    erros = {}
+
+    if any(a.data_inicio < novos["data_inicial"] for a in evento.atividades):
+        erros["data_inicial"] = ["Há atividades antes deste início. Ajuste a programação primeiro."]
+    if any(a.data_fim > novos["data_fim"] for a in evento.atividades):
+        erros["data_fim"] = ["Há atividades depois deste término. Ajuste a programação primeiro."]
+
+    inscritos = contar_ativas(evento.id)
+    if novos["vagas"] < inscritos:
+        erros["vagas"] = [f"Já existem {inscritos} inscritos; as vagas não podem ser menos que isso."]
+
+    if erros:
+        raise ValidationError(erros)
