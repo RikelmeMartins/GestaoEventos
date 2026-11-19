@@ -8,6 +8,7 @@ import RotaProtegida from "./components/RotaProtegida";
 import Painel from "./pages/Painel";
 import NovoEvento from "./pages/NovoEvento";
 import NovaAtividade from "./pages/NovaAtividade";
+import Inscritos from "./pages/Inscritos";
 
 function NaoEncontrada() {
   return (
@@ -35,6 +36,7 @@ export default function App() {
           <Route path="/painel/eventos/:id/atividades/nova" element={<RotaProtegida><NovaAtividade /></RotaProtegida>} />
           <Route path="/painel/eventos/:id/editar" element={<RotaProtegida><NovoEvento /></RotaProtegida>} />
           <Route path="/painel/eventos/:id/atividades/:atividadeId/editar" element={<RotaProtegida><NovaAtividade /></RotaProtegida>} />
+          <Route path="/painel/eventos/:id/inscritos" element={<RotaProtegida><Inscritos /></RotaProtegida>} />
           <Route path="*" element={<NaoEncontrada />} />
         </Routes>
       </main>
