@@ -261,6 +261,7 @@ export default function EventoDetalhe() {
                     </dl>
                     {podeGerenciar && (
                         <div className="gerenciar">
+                            <Link to={`/painel/eventos/${evento.id}/inscritos`} className="botao">Ver inscritos</Link>
                             <Link to={`/painel/eventos/${evento.id}/editar`} className="botao">Editar evento</Link>
                             <button className="botao" onClick={cancelarEvento}>Cancelar evento</button>
                         </div>
