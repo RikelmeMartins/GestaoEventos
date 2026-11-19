@@ -24,5 +24,5 @@ class ParticipantesSchema(Schema):
 
 class InscritoSchema(Schema):
     id = fields.Int(dump_only=True)
-    criado_em = fields.DateTime(dump_only=True)
+    criada_em = fields.DateTime(dump_only=True)
     usuario = fields.Nested(ParticipantesSchema, dump_only=True)
