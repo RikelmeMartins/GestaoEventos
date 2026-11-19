@@ -198,6 +198,10 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .lista-painel .lado { display: flex; align-items: center; gap: 12px; flex: none; }
 .lista-painel .lado a { font-weight: 500; }
 
+.tabela-inscritos tbody tr { cursor: default; }
+.tabela-inscritos tbody tr:hover td { background: none; }
+.tabela-inscritos .col-email { color: var(--muted); }
+
 @media (max-width: 1000px) {
   .programacao, .sobre { grid-column: 1 / -1; }
 }
@@ -241,4 +245,8 @@ button, input, textarea, select { font: inherit; color: inherit; }
   .numeros div:nth-child(n + 3) { border-top: 1px solid var(--border); }
   .numeros div:last-child:nth-child(odd) { grid-column: 1 / -1; } /* número ímpar de itens: o último ocupa a linha toda */
   .botao-grande { height: 44px; }
+
+  .tabela-inscritos td.col-nome { flex: 1 0 100%; font-weight: 500; }
+  .tabela-inscritos td.col-email, .tabela-inscritos td.col-data { margin-top: 2px; font-size: 13px; color: var(--muted); }
+  .tabela-inscritos td.col-data::before { content: "·"; margin: 0 6px; }
 }
