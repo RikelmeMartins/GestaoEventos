@@ -1,5 +1,4 @@
 from flask import abort
-from datetime import datetime
 from app.extensions import db
 from app.models.evento import Evento
 from app.schemas.evento_schemas import EventoSchema
@@ -88,23 +87,3 @@ def listar_inscritos(id):
     )
 
     return db.session.scalars(consulta).all()
-
-def registrar_presenca(id, inscricao_id, dados):
-    evento = buscar_evento_gerenciavel(id)
-    if evento.status == "cancelado":
-        abort(409, description="Não é possível registrar presença em um evento cancelado.")
-    if evento.data_inicial > datetime.now():
-        abort(409, description="A presença só pode ser registrada depois que o evento começar.")
-
-    presente = (dados or {}).get("presente")
-    if not isinstance(presente, bool):
-        raise ValidationError({"presente": ["Informe true ou false."]})
-
-    inscricao = db.session.get(Inscricao, inscricao_id)
-    if inscricao is None or inscricao.evento_id != evento.id or inscricao.status != "ativa":
-        abort(404, description="Inscrição não encontrada neste evento.")
-
-    inscricao.presente = presente
-    inscricao.presente_em = datetime.now() if presente else None
-    db.session.commit()
-    return inscricao
