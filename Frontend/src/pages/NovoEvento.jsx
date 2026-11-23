@@ -9,9 +9,10 @@ const CAMPOS = [
     { nome: "data_inicial", rotulo: "Início", tipo: "datetime-local" },
     { nome: "data_fim", rotulo: "Término", tipo: "datetime-local" },
     { nome: "vagas", rotulo: "Vagas", tipo: "number", min: 1 }, 
+    { nome: "frequencia_minima", rotulo: "Frequência mínima para certificado (%) — 0 = qualquer presença", tipo: "number", min: 0, max: 100 },
 ];
 
-const VAZIO = { titulo: "", categoria: "", local: "", data_inicial: "", data_fim: "", vagas: "", descricao: "" };
+const VAZIO = { titulo: "", categoria: "", local: "", data_inicial: "", data_fim: "", vagas: "", frequencia_minima: "0", descricao: "" };
 
 export default function NovoEvento() {
     const { id } = useParams();
@@ -33,6 +34,7 @@ export default function NovoEvento() {
             data_inicial: data.data_inicial.slice(0, 16),
             data_fim: data.data_fim.slice(0, 16),
             vagas: String(data.vagas),
+            frequencia_minima: String(data.frequencia_minima),
             descricao: data.descricao ?? "",
         }))
         .catch((err) => setErro(mensagemErro(err)));
@@ -48,7 +50,7 @@ export default function NovoEvento() {
         setCampos({});
         setEnviando(true);
         try {
-            const corpo = { ...dados, vagas: Number(dados.vagas), descricao: dados.descricao || null};
+            const corpo = { ...dados, vagas: Number(dados.vagas), frequencia_minima: Number(dados.frequencia_minima), descricao: dados.descricao || null };
             const { data } = editando
                 ? await api.put(`/eventos/${id}`, corpo)
                 : await api.post("/eventos/", corpo);
@@ -84,6 +86,7 @@ export default function NovoEvento() {
                                 onChange={alterar}
                                 required
                                 min={c.min}
+                                max={c.max}
                                 aria-invalid={Boolean(campos[c.nome])}
                             />
                             {campos[c.nome] && <span className="erro-campo">{campos[c.nome][0]}</span>}
