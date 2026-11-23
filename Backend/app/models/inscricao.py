@@ -13,6 +13,8 @@ class Inscricao(db.Model):
     status = db.Column(db.String(20), nullable=False, default="ativa")
     criada_em = db.Column(db.DateTime, nullable=False, default=datetime.now)
     cancelada_em = db.Column(db.DateTime)
+    presente = db.Column(db.Boolean, nullable=False, default=False, server_default=db.false())
+    presente_em = db.Column(db.DateTime)
 
     usuario_id = db.Column(db.Integer, db.ForeignKey("usuarios.id"), nullable=False, index=True)
     evento_id = db.Column(db.Integer, db.ForeignKey("eventos.id"), nullable=False, index=True)
