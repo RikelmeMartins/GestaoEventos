@@ -13,5 +13,5 @@ class Presenca(db.Model):
     inscricao_id = db.Column(db.Integer, db.ForeignKey("inscricoes.id"), nullable=False, index=True)
     atividade_id = db.Column(db.Integer, db.ForeignKey("atividades.id"), nullable=False, index=True)
 
-    inscricao = db.relationship("Incricao", back_populates="presencas")
+    inscricao = db.relationship("Inscricao", back_populates="presencas")
     atividade = db.relationship("Atividade", back_populates="presencas")

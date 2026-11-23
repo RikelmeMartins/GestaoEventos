@@ -202,6 +202,15 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .tabela-inscritos tbody tr:hover td { background: none; }
 .tabela-inscritos .col-email { color: var(--muted); }
 
+.seletor-atividade { max-width: 480px; margin-bottom: 16px; }
+.contagem-presenca { margin-bottom: 8px; }
+.aviso-presenca { margin-bottom: var(--gap); color: var(--muted); }
+.tabela-inscritos .col-presenca { width: 1%; text-align: center; }
+.tabela-inscritos input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--accent); cursor: pointer; }
+.tabela-inscritos input[type="checkbox"]:disabled { cursor: not-allowed; }
+.tabela-inscritos .col-frequencia { color: var(--muted); }
+.tabela-inscritos .col-frequencia.atinge { color: var(--accent-ink); font-weight: 600; }
+
 @media (max-width: 1000px) {
   .programacao, .sobre { grid-column: 1 / -1; }
 }
@@ -246,7 +255,10 @@ button, input, textarea, select { font: inherit; color: inherit; }
   .numeros div:last-child:nth-child(odd) { grid-column: 1 / -1; } /* número ímpar de itens: o último ocupa a linha toda */
   .botao-grande { height: 44px; }
 
-  .tabela-inscritos td.col-nome { flex: 1 0 100%; font-weight: 500; }
-  .tabela-inscritos td.col-email, .tabela-inscritos td.col-data { margin-top: 2px; font-size: 13px; color: var(--muted); }
-  .tabela-inscritos td.col-data::before { content: "·"; margin: 0 6px; }
+  .tabela-inscritos td.col-presenca { order: -1; margin-right: 12px; }
+  .tabela-inscritos td.col-nome { order: 0; flex: 1 0 calc(100% - 100px); font-weight: 500; }
+  .tabela-inscritos td.col-frequencia { order: 1; flex: 0 0 56px; text-align: right; }
+  .tabela-inscritos td.col-email { order: 2; }
+  .tabela-inscritos td.col-data { order: 3; }
+  .tabela-inscritos input[type="checkbox"] { width: 24px; height: 24px; }
 }
