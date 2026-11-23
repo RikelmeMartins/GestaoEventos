@@ -25,4 +25,8 @@ class ParticipantesSchema(Schema):
 class InscritoSchema(Schema):
     id = fields.Int(dump_only=True)
     criada_em = fields.DateTime(dump_only=True)
+    atividades_presentes = fields.Method("ids_das_atividades")
     usuario = fields.Nested(ParticipantesSchema, dump_only=True)
+
+    def ids_das_atividades(self, inscricao):
+        return [p.atividade_id for p in inscricao.presencas]
