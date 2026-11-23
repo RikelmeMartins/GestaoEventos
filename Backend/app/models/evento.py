@@ -14,6 +14,7 @@ class Evento(db.Model):
     data_fim = db.Column(db.DateTime, nullable=False)
     local = db.Column(db.String(200), nullable=False)
     vagas = db.Column(db.Integer, nullable=False)
+    frequencia_minima = db.Column(db.Integer, nullable=False, default=0, server_default="0")
     status = db.Column(db.String(20), nullable=False, default="ativo")
 
     criado_em = db.Column(db.DateTime, nullable=False, default=datetime.now)
@@ -21,5 +22,5 @@ class Evento(db.Model):
     organizador = db.relationship("Usuario",  back_populates="eventos_organizados")
 
     atividades = db.relationship("Atividade", back_populates="evento", cascade="all, delete-orphan", 
-                                 order_by="Atividade.data_inicio")
+                                    order_by="Atividade.data_inicio")
     inscricoes = db.relationship("Inscricao", back_populates="evento")

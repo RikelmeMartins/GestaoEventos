@@ -1,9 +1,12 @@
 from flask import abort  
+from datetime import datetime
 from marshmallow import ValidationError
 from app.extensions import db
 from app.models.atividade import Atividade
 from app.schemas.atividade_schemas import AtividadeSchema
 from app.services import evento_service
+from app.models.inscricao import Inscricao
+from app.models.presenca import Presenca
 
 atividade_schema = AtividadeSchema()
 
@@ -65,5 +68,34 @@ def atualizar_atividade(id, dados, parcial=False):
 def excluir_atividade(id):
     atividade = buscar_atividade_gerenciavel(id)
     validar_evento_ativo(atividade.evento)
+
+    if atividade.presencas:
+        abort(409, description="Esta atividade já tem presenças registradas e não pode ser excluída.")
+
     db.session.delete(atividade)
     db.session.commit()
+
+def registrar_presenca(id, inscricao_id, dados):
+    atividade = buscar_atividade_gerenciavel(id)
+
+    if atividade.evento.status == "cancelado":
+        abort(409, description="Não é possível registrar presença em um evento cancelado.")
+    if atividade.data_inicio > datetime.now():
+        abort(409, description="A presença só pode ser registrada depois que a atividade começar.")  
+
+    presente = (dados or {}).get("presente")
+    if not isinstance(presente, bool):
+        raise ValidationError({"presente": ["Informe true ou false."]})
+
+    inscricao = db.session.get(Inscricao, inscricao_id)
+    if inscricao is None or inscricao.evento_id != atividade.evento_id or inscricao.status != "ativa":
+        abort(404, description="Inscrição não encontrada neste evento.")
+
+    presenca = db.session.scalar(db.select(Presenca).filter_by(inscricao_id=inscricao.id, atividade_id=atividade.id))
+    if presente and presenca is None:
+        db.session.add(Presenca(inscricao_id=inscricao.id, atividade_id=atividade.id))
+    elif not presente and presenca is not None:
+        db.session.delete(presenca)
+
+    db.session.commit()
+    return inscricao
