@@ -1,15 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import api, { mensagemErro } from "../services/api";
-import { dataCurta, hora, situacao } from "../utils/datas";
+import { dataCurta, hora } from "../utils/datas";
 
 export default function Inscritos() {
     const { id } = useParams();
     const [evento, setEvento] = useState(null);
     const [inscritos, setInscritos] = useState([]);
     const [erro, setErro] = useState("");
-    const [erroPresenca, setErroPresenca] = useState("");
-    const [salvando, setSalvando] = useState(null);
 
     useEffect(() => {
         Promise.all([api.get(`/eventos/${id}`), api.get(`/eventos/${id}/inscritos`)])
@@ -19,19 +17,6 @@ export default function Inscritos() {
             })
             .catch((err) => setErro(mensagemErro(err)));
     }, [id]);
-
-    async function marcarPresenca(inscricao, presente) {
-        setErroPresenca("");
-        setSalvando(inscricao.id);
-        try {
-            const { data } = await api.put(`/eventos/${id}/inscritos/${inscricao.id}/presenca`, { presente });
-            setInscritos(inscritos.map((i) => (i.id === data.id ? data : i)));
-        } catch (err) {
-            setErroPresenca(mensagemErro(err));
-        } finally {
-            setSalvando(null);
-        }
-    }
 
     const trilha = (
         <nav className="trilha" aria-label="Você está em">
@@ -63,10 +48,6 @@ export default function Inscritos() {
         );
     }
 
-    const s = situacao(evento);
-    const podeMarcar = s === "acontecendo" || s === "encerrado";
-    const presentes = inscritos.filter((i) => i.presente).length;
-
     return (
         <>
             {trilha}
@@ -75,18 +56,8 @@ export default function Inscritos() {
                 <div>
                     <h1>Inscritos</h1>
                     <p><strong>{inscritos.length}</strong> de {evento.vagas} vagas preenchidas em {evento.titulo}</p>
-                    {inscritos.length > 0 && <p><strong>{presentes}</strong> {presentes === 1 ? "presente" : "presentes"}</p>}
                 </div>
             </div>
-
-            {!podeMarcar && inscritos.length > 0 && (
-                <p className="aviso-presenca">
-                    {s === "cancelado"
-                        ? "Evento cancelado: não há presença para registrar."
-                        : "A presença poderá ser marcada quando o evento começar."}
-                </p>
-            )}
-            {erroPresenca && <p className="erro" role="alert">{erroPresenca}</p>}
 
             <section className="painel">
                 {inscritos.length === 0 ? (
@@ -98,7 +69,6 @@ export default function Inscritos() {
                                 <th>Nome</th>
                                 <th>E-mail</th>
                                 <th>Inscrito em</th>
-                                <th>Presente</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -107,15 +77,6 @@ export default function Inscritos() {
                                     <td className="col-nome">{i.usuario.nome}</td>
                                     <td className="col-email">{i.usuario.email}</td>
                                     <td className="col-data num">{dataCurta(i.criada_em)}, {hora(i.criada_em)}</td>
-                                    <td className="col-presenca">
-                                        <input
-                                            type="checkbox"
-                                            checked={i.presente}
-                                            disabled={!podeMarcar || salvando === i.id}
-                                            onChange={(e) => marcarPresenca(i, e.target.checked)}
-                                            aria-label={`Presença de ${i.usuario.nome}`}
-                                        />
-                                    </td>
                                 </tr>
                             ))}
                         </tbody>

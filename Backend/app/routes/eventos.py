@@ -8,7 +8,6 @@ bp = Blueprint("eventos", __name__, url_prefix="/api/eventos")
 
 evento_schema = EventoSchema()
 eventos_schema = EventoSchema(many=True)
-inscrito_schema = InscritoSchema()
 inscritos_schema = InscritoSchema(many=True)
 
 @bp.get("/")
@@ -42,9 +41,3 @@ def cancelar(id):
 @perfil_requerido("organizador")
 def inscritos(id):
     return jsonify(inscritos_schema.dump(evento_service.listar_inscritos(id)))
-
-@bp.put("/<int:id>/inscritos/<int:inscricao_id>/presenca")
-@perfil_requerido("organizador")
-def presenca(id, inscricao_id):
-    inscricao = evento_service.registrar_presenca(id, inscricao_id, request.get_json(silent=True))
-    return jsonify(inscrito_schema.dump(inscricao))
