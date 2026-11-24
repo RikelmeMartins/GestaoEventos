@@ -15,6 +15,7 @@ class EventoSchema(Schema):
     data_fim = fields.DateTime(required=True)
     local = fields.Str(required=True, validate=validate.Length(min=1, max=200))
     vagas = fields.Int(required=True, validate=validate.Range(min=1))
+    frequencia_minima = fields.Int(load_default=0, validate=validate.Range(min=0, max=100))
     status = fields.Str(dump_only=True)
     criado_em = fields.DateTime(dump_only=True)
     organizador = fields.Nested(ResponsalvelSchema, dump_only=True)

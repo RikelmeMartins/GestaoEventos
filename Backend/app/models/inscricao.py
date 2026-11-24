@@ -19,3 +19,4 @@ class Inscricao(db.Model):
 
     usuario = db.relationship("Usuario", back_populates="inscricoes")
     evento = db.relationship("Evento", back_populates="inscricoes")
+    presencas = db.relationship("Presenca", back_populates="inscricao", cascade="all, delete-orphan")

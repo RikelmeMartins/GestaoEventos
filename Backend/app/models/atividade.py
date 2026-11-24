@@ -16,3 +16,4 @@ class Atividade(db.Model):
 
     evento_id = db.Column(db.Integer, db.ForeignKey("eventos.id"), nullable=False, index=True)
     evento = db.relationship("Evento", back_populates="atividades")
+    presencas = db.relationship("Presenca", back_populates="atividade")

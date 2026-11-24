@@ -110,3 +110,16 @@ export function baixarIcs(evento) {
   link.click();
   URL.revokeObjectURL(link.href);
 }
+
+const duracao = (a) => new Date(a.data_fim) - new Date(a.data_inicio);
+
+export function frequencia(idsPresentes, atividades) {
+  const total = atividades.reduce((soma, a) => soma + duracao(a), 0);
+  if (total === 0) return 0;
+  const feitas = atividades.filter((a) => idsPresentes.includes(a.id)).reduce((soma, a) => soma + duracao(a), 0);
+  return Math.round((feitas / total) * 100);
+}
+
+export function jaComecou(iso, agora = new Date()) {
+  return new Date(iso) <= agora;
+}

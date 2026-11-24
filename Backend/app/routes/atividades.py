@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from app.schemas.atividade_schemas import AtividadeSchema
+from app.schemas.inscricao_schemas import InscritoSchema
 from app.services import atividade_service
 from app.auth import perfil_requerido
 
@@ -7,6 +8,7 @@ bp = Blueprint("atividades", __name__, url_prefix="/api")
 
 atividade_schema = AtividadeSchema()
 atividades_schema = AtividadeSchema(many=True)
+inscrito_schema = InscritoSchema()
 
 @bp.get("/eventos/<int:evento_id>/atividades")
 def listar(evento_id):
@@ -35,3 +37,9 @@ def atualizar(id):
 def excluir(id):
     atividade_service.excluir_atividade(id)
     return "", 204
+
+@bp.put("/atividades/<int:id>/presencas/<int:inscricao_id>")
+@perfil_requerido("organizador")
+def presenca(id, inscricao_id):
+    inscricao = atividade_service.registrar_presenca(id, inscricao_id, request.get_json(silent=True))
+    return jsonify(inscrito_schema.dump(inscricao))
