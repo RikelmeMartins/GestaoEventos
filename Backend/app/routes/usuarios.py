@@ -3,17 +3,20 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from app.schemas.usuario_schemas import UsuarioSchema
 from app.services import usuario_services
 from app.auth import perfil_requerido
+from app.extensions import limiter
 
 bp = Blueprint("usuarios", __name__, url_prefix="/api/usuarios")
 usuario_schema = UsuarioSchema()
 usuarios_schema = UsuarioSchema(many=True)
 
 @bp.post("/")
+@limiter.limit("10 per hour")
 def cadastrar_usuario():
     usuario = usuario_services.cadastrar_usuario(request.get_json())
     return jsonify(usuario_schema.dump(usuario)), 201
 
 @bp.post("/login")
+@limiter.limit("5 per minute")
 def login():
     usuario, token = usuario_services.autenticar(request.get_json())
     return jsonify({"token": token, "usuario": usuario_schema.dump(usuario)})

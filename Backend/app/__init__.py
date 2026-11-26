@@ -1,5 +1,5 @@
 from flask import Flask, jsonify
-from .extensions import db, cors, migrate, jwt
+from .extensions import db, cors, migrate, jwt, limiter
 from marshmallow import ValidationError
 from werkzeug.exceptions import HTTPException
 from dotenv import load_dotenv
@@ -14,6 +14,7 @@ def create_app(config_class=None):
 
     db.init_app(app)
     jwt.init_app(app)
+    limiter.init_app(app)
     migrate.init_app(app, db)
     cors.init_app(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
 
@@ -57,3 +58,7 @@ def registrar_erros(app):
     @jwt.expired_token_loader
     def token_expirado(header, payload):
         return jsonify({"erro": "Sessão expirada. Faça login novamente."}), 401
+
+    @app.errorhandler(429)
+    def muitas_tentativas(e):
+        return jsonify({"erro": "Muitas tentativas. Aguarde um pouco e tente de novo."}), 429
