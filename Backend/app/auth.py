@@ -1,12 +1,17 @@
 from functools import wraps
 from flask import abort
-from flask_jwt_extended import get_jwt, get_jwt_identity, verify_jwt_in_request
+from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request
+from app.extensions import db
+from app.models.usuario import Usuario
 
 def usuario_atual():
     return int(get_jwt_identity())
 
+def usuario_logado():
+    return db.session.get(Usuario, usuario_atual())
+
 def perfil_atual():
-    return get_jwt().get("perfil")
+    return usuario_logado().perfil
 
 def admin():
     return perfil_atual() == "administrador"

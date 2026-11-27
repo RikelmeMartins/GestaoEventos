@@ -34,7 +34,7 @@ def autenticar(dados):
     if not usuario or not usuario.verificar_senha(dados["senha"]):
         abort(401, description="E-mail ou senha invalidos.")
 
-    token = create_access_token(identity=str(usuario.id), additional_claims={"perfil": usuario.perfil})
+    token = create_access_token(identity=str(usuario.id), additional_claims={"perfil": usuario.perfil, "versao": usuario.token_versao})
     return usuario, token
 
 def listar_usuarios():
@@ -48,5 +48,6 @@ def alterar_perfil(id, dados):
         abort(400, description="Você não pode remover seu próprio perfil de administrador.")
 
     usuario.perfil = perfil
+    usuario.encerrar_sessoes()
     db.session.commit()
     return usuario

@@ -3,6 +3,7 @@ from .extensions import db, cors, migrate, jwt, limiter
 from marshmallow import ValidationError
 from werkzeug.exceptions import HTTPException
 from dotenv import load_dotenv
+from .models.usuario import Usuario
 
 def create_app(config_class=None):
     load_dotenv()
@@ -62,3 +63,12 @@ def registrar_erros(app):
     @app.errorhandler(429)
     def muitas_tentativas(e):
         return jsonify({"erro": "Muitas tentativas. Aguarde um pouco e tente de novo."}), 429
+
+    @jwt.token_in_blocklist_loader
+    def token_revogado(header, payload):
+        usuario = db.session.get(Usuario, int(payload["sub"]))
+        return usuario is None or payload.get("versao") != usuario.token_versao
+
+    @jwt.revoked_token_loader
+    def sessao_encerrada(header, payload):
+        return jsonify({"erro": "Sua sessão foi encerrada. Faça login novamente."}), 401

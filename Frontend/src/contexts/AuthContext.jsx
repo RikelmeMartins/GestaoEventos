@@ -44,6 +44,16 @@ export function AuthProvider ({children}) {
         return () => api.interceptors.response.eject(id);
     }, []);
 
+    useEffect(() => {
+        if (!localStorage.getItem("token")) return;
+        api.get("/usuarios/me")
+            .then(({ data }) => {
+                localStorage.setItem("usuario", JSON.stringify(data));
+                setUsuario(data);
+            })
+            .catch(() => {});
+    }, []);
+    
     const perfil = usuario?.perfil;
     const valor = {
         usuario,

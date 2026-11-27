@@ -11,6 +11,7 @@ class Usuario(db.Model):
     email = db.Column(db.String(200), nullable=False, unique=True)
     senha_hash = db.Column(db.String(255), nullable=False)
     perfil = db.Column(db.String(200), nullable=False, default="participante")
+    token_versao = db.Column(db.Integer, nullable=False, default=0, server_default="0")
     inscricoes = db.relationship("Inscricao", back_populates="usuario")
 
     eventos_organizados = db.relationship("Evento", back_populates="organizador")
@@ -20,3 +21,6 @@ class Usuario(db.Model):
 
     def verificar_senha(self, senha):
         return check_password_hash(self.senha_hash, senha)
+
+    def encerrar_sessoes(self):
+        self.token_versao += 1
