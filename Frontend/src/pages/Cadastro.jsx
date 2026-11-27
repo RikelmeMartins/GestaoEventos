@@ -6,7 +6,7 @@ import { errosDosCampos, mensagemErro } from "../services/api";
 const CAMPOS = [
     { nome: "nome", rotulo: "Nome completo", tipo: "text", autoComplete: "name" },
     { nome: "email", rotulo: "E-mail", tipo: "email", autoComplete: "email" },
-    { nome: "senha", rotulo: "Senha (mínimo 6 caracteres)", tipo: "password", autoComplete:"new-password", minLength: 6},
+    { nome: "senha", rotulo: "Senha (mínimo 8 caracteres)", tipo: "password", autoComplete:"new-password", minLength: 8},
 ];
 
 export default function Cadastro() {

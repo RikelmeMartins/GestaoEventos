@@ -1,8 +1,9 @@
 from flask import Flask, jsonify
-from .extensions import db, cors, migrate, jwt
+from .extensions import db, cors, migrate, jwt, limiter
 from marshmallow import ValidationError
 from werkzeug.exceptions import HTTPException
 from dotenv import load_dotenv
+from .models.usuario import Usuario
 
 def create_app(config_class=None):
     load_dotenv()
@@ -11,11 +12,13 @@ def create_app(config_class=None):
 
     app = Flask(__name__)
     app.config.from_object(config_class)
+    validar_config(app)
 
     db.init_app(app)
     jwt.init_app(app)
+    limiter.init_app(app)
     migrate.init_app(app, db)
-    cors.init_app(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
+    cors.init_app(app, resources={r"/api/*": {"origins": app.config["FRONTEND_URL"]}})
 
     from . import models
     from .routes.eventos import bp as eventos_bp
@@ -57,3 +60,25 @@ def registrar_erros(app):
     @jwt.expired_token_loader
     def token_expirado(header, payload):
         return jsonify({"erro": "Sessão expirada. Faça login novamente."}), 401
+
+    @app.errorhandler(429)
+    def muitas_tentativas(e):
+        return jsonify({"erro": "Muitas tentativas. Aguarde um pouco e tente de novo."}), 429
+
+    @jwt.token_in_blocklist_loader
+    def token_revogado(header, payload):
+        usuario = db.session.get(Usuario, int(payload["sub"]))
+        return usuario is None or payload.get("versao") != usuario.token_versao
+
+    @jwt.revoked_token_loader
+    def sessao_encerrada(header, payload):
+        return jsonify({"erro": "Sua sessão foi encerrada. Faça login novamente."}), 401
+
+def validar_config(app):
+    obrigatorias = {"SQLALCHEMY_DATABASE_URI": "DATABASE_URL", "JWT_SECRET_KEY": "JWT_SECRET_KEY"}
+    for chave, variavel in obrigatorias.items():
+        if not app.config.get(chave):
+            raise RuntimeError(f"Falta a variável {variavel} no arquivo .env.")
+
+    if len(app.config["JWT_SECRET_KEY"]) < 32:
+        raise RuntimeError("A JWT_SECRET_KEY precisa ter pelo menos 32 caracteres.")
