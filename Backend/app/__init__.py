@@ -12,12 +12,13 @@ def create_app(config_class=None):
 
     app = Flask(__name__)
     app.config.from_object(config_class)
+    validar_config(app)
 
     db.init_app(app)
     jwt.init_app(app)
     limiter.init_app(app)
     migrate.init_app(app, db)
-    cors.init_app(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
+    cors.init_app(app, resources={r"/api/*": {"origins": app.config["FRONTEND_URL"]}})
 
     from . import models
     from .routes.eventos import bp as eventos_bp
@@ -72,3 +73,12 @@ def registrar_erros(app):
     @jwt.revoked_token_loader
     def sessao_encerrada(header, payload):
         return jsonify({"erro": "Sua sessão foi encerrada. Faça login novamente."}), 401
+
+def validar_config(app):
+    obrigatorias = {"SQLALCHEMY_DATABASE_URI": "DATABASE_URL", "JWT_SECRET_KEY": "JWT_SECRET_KEY"}
+    for chave, variavel in obrigatorias.items():
+        if not app.config.get(chave):
+            raise RuntimeError(f"Falta a variável {variavel} no arquivo .env.")
+
+    if len(app.config["JWT_SECRET_KEY"]) < 32:
+        raise RuntimeError("A JWT_SECRET_KEY precisa ter pelo menos 32 caracteres.")

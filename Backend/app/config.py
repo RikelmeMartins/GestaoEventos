@@ -6,3 +6,4 @@ class Config:
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=8)
     RATELIMIT_STORAGE_URI = "memory://"
+    FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
