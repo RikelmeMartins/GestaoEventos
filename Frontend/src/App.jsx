@@ -9,6 +9,8 @@ import Painel from "./pages/Painel";
 import NovoEvento from "./pages/NovoEvento";
 import NovaAtividade from "./pages/NovaAtividade";
 import Inscritos from "./pages/Inscritos";
+import EsqueciSenha from "./pages/EsqueciSenha";
+import RedefinirSenha from "./pages/RedefinirSenha";
 
 function NaoEncontrada() {
   return (
@@ -31,6 +33,8 @@ export default function App() {
           <Route path="/eventos/:id" element={<EventoDetalhe />} />
           <Route path="/login" element={<Login />} />
           <Route path="/cadastro" element={<Cadastro />} />
+          <Route path="/esqueci-senha" element={<EsqueciSenha />} />
+          <Route path="/redefinir-senha" element={<RedefinirSenha />} />
           <Route path="/painel" element={<RotaProtegida><Painel /></RotaProtegida>} />
           <Route path="/painel/novo" element={<RotaProtegida><NovoEvento /></RotaProtegida>} />
           <Route path="/painel/eventos/:id/atividades/nova" element={<RotaProtegida><NovaAtividade /></RotaProtegida>} />

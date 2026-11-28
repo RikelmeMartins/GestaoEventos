@@ -14,3 +14,10 @@ class LoginSchema(Schema):
 
 class AlterarPerfilSchema(Schema):
     perfil = fields.Str(required=True, validate=validate.OneOf(PERFIL))
+
+class EsqueciSenhaSchema(Schema):
+    email = fields.Str(required=True)
+
+class RedefinirSenhaSchema(Schema):
+    token = fields.Str(required=True)
+    senha = fields.Str(required=True, load_only=True, validate=validate.Length(min=8, max=128))

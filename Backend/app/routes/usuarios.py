@@ -37,3 +37,15 @@ def listar():
 def alterar_perfil(id):
     usuario = usuario_services.alterar_perfil(id, request.get_json())
     return jsonify(usuario_schema.dump(usuario))
+
+@bp.post("/esqueci-senha")
+@limiter.limit("5 per hour")
+def esqueci_senha():
+    usuario_services.solicitar_redefinicao(request.get_json())
+    return jsonify({"mensagem": "Se o e-mail estiver cadastrado, você receberá um link para criar uma nova senha."})
+
+@bp.post("/redefinir-senha")
+@limiter.limit("10 per hour")
+def redefinir_senha():
+    usuario_services.redefinir_senha(request.get_json())
+    return jsonify({"mensagem": "Senha alterada. Entre com a nova senha."})

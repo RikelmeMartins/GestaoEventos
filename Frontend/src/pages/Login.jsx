@@ -33,6 +33,7 @@ export default function Login() {
             <p>Use o e-mail e a senha da sua conta.</p>
 
             <form className="painel form" onSubmit={enviar}>
+                {location.state?.mensagem && !erro && <p className="sucesso" role="status">{location.state.mensagem}</p>}
                 {erro && <p className="erro" role="alert">{erro}</p>}
 
                 <label className="campo">
@@ -45,9 +46,12 @@ export default function Login() {
                     <input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} required autoComplete="current-password" />
                 </label>
 
-                <button className="botao botao-principal botao-grande" disabled={enviando}>
-                    {enviando ? "Entrando…" : "Entrar"}
-                </button>
+                <div className="acoes-login">
+                    <button className="botao botao-principal botao-grande" disabled={enviando}>
+                        {enviando ? "Entrando…" : "Entrar"}
+                    </button>
+                    <Link to="/esqueci-senha" className="botao-texto">Esqueci minha senha</Link>
+                </div>
             </form>
 
             <p className="rodape-form">Ainda não tem conta? <Link to="/cadastro">Criar conta</Link></p>
