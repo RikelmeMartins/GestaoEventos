@@ -12,6 +12,7 @@ def create_app(config_class=None):
 
     app = Flask(__name__)
     app.config.from_object(config_class)
+    app.json.ensure_ascii = False
     validar_config(app)
 
     db.init_app(app)
